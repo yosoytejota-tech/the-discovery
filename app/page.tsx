@@ -8,12 +8,11 @@ export default function Home() {
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body { background: #1c4a52; }
+        body { background: #0a0a0a; }
 
         .landing {
           height: 100vh;
-          background: 
-            radial-gradient(ellipse 100% 80% at 50% -10%, #4a9fa8 0%, #1c5a64 30%, #0e3840 60%, #071e25 100%);
+          background: radial-gradient(ellipse 100% 80% at 50% 0%, #2a2a2a 0%, #111111 45%, #080808 100%);
           display: flex;
           flex-direction: column;
           position: relative;
@@ -23,7 +22,7 @@ export default function Home() {
         .noise {
           position: absolute;
           inset: 0;
-          opacity: 0.04;
+          opacity: 0.035;
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
           background-size: 200px 200px;
           pointer-events: none;
@@ -44,7 +43,7 @@ export default function Home() {
           font-size: 0.68rem;
           letter-spacing: 0.35em;
           text-transform: uppercase;
-          color: rgba(220, 245, 242, 0.7);
+          color: rgba(255, 255, 255, 0.5);
           text-decoration: none;
         }
 
@@ -60,13 +59,13 @@ export default function Home() {
           font-size: 0.65rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: rgba(200, 235, 230, 0.55);
+          color: rgba(255, 255, 255, 0.4);
           text-decoration: none;
           transition: color 0.3s ease;
         }
 
         .nav-links a:hover {
-          color: rgba(220, 245, 242, 0.9);
+          color: rgba(255, 255, 255, 0.85);
         }
 
         .hero {
@@ -88,7 +87,7 @@ export default function Home() {
           line-height: 1;
           letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: #f0faf8;
+          color: #ffffff;
           margin-bottom: 2rem;
           white-space: nowrap;
         }
@@ -96,31 +95,37 @@ export default function Home() {
         .divider {
           width: 40px;
           height: 1px;
-          background: rgba(180, 230, 225, 0.4);
+          background: rgba(255, 255, 255, 0.2);
           margin-bottom: 2rem;
         }
 
-        .headline {
+        .headline-top {
           font-family: 'Cormorant Garamond', serif;
           font-weight: 300;
-          font-size: clamp(1.2rem, 2.2vw, 1.6rem);
-          line-height: 1.5;
-          color: rgba(230, 248, 245, 0.85);
+          font-size: clamp(1.1rem, 2vw, 1.5rem);
+          line-height: 1.4;
+          color: rgba(255, 255, 255, 0.55);
           letter-spacing: 0.02em;
-          margin-bottom: 1.2rem;
+          margin-bottom: 0.4rem;
         }
 
-        .headline em {
+        .headline-bottom {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 300;
           font-style: italic;
-          color: #a8ddd5;
+          font-size: clamp(1.6rem, 3vw, 2.4rem);
+          line-height: 1.3;
+          color: #c8c8c8;
+          letter-spacing: 0.02em;
+          margin-bottom: 1.6rem;
         }
 
         .subline {
           font-family: 'Jost', sans-serif;
           font-weight: 300;
-          font-size: clamp(0.78rem, 1.3vw, 0.88rem);
+          font-size: clamp(0.82rem, 1.4vw, 0.95rem);
           line-height: 1.85;
-          color: rgba(200, 235, 230, 0.6);
+          color: rgba(255, 255, 255, 0.45);
           letter-spacing: 0.04em;
           max-width: 440px;
           margin-bottom: 2.8rem;
@@ -133,19 +138,19 @@ export default function Home() {
           font-size: 0.65rem;
           letter-spacing: 0.3em;
           text-transform: uppercase;
-          color: rgba(220, 245, 242, 0.85);
-          border: 1px solid rgba(180, 225, 218, 0.4);
+          color: rgba(255, 255, 255, 0.75);
+          border: 1px solid rgba(255, 255, 255, 0.25);
           padding: 1rem 3rem;
           text-decoration: none;
           transition: all 0.4s ease;
-          background: rgba(255,255,255,0.04);
+          background: transparent;
           cursor: pointer;
         }
 
         .cta:hover {
-          color: #f0faf8;
-          border-color: rgba(180, 225, 218, 0.75);
-          background: rgba(255,255,255,0.08);
+          color: #ffffff;
+          border-color: rgba(255, 255, 255, 0.6);
+          background: rgba(255, 255, 255, 0.05);
           letter-spacing: 0.35em;
         }
 
@@ -161,17 +166,15 @@ export default function Home() {
         <Link href="/" className="nav-logo">The Discovery</Link>
         <ul className="nav-links">
           <li><Link href="/about">About</Link></li>
-          <li><Link href="/chat">Begin</Link></li>
+          <li><Link href="/login">Log In</Link></li>
         </ul>
       </nav>
 
       <div className="hero">
         <h1 className="title">The Discovery</h1>
         <div className="divider" />
-        <p className="headline">
-          Most trips start with a destination.<br />
-          <em>We start with you.</em>
-        </p>
+        <p className="headline-top">Most trips start with a destination.</p>
+        <p className="headline-bottom">We start with you.</p>
         <p className="subline">
           The Discovery is your personal travel architect — we uncover who you are as a traveler before we tell you where to go.
         </p>
