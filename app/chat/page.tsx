@@ -104,11 +104,11 @@ export default function ChatPage() {
         {!started ? (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: "32px" }}>
             <div>
-              <p style={{ color: "#888", fontSize: "14px", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "16px" }}>
+              <p style={{ color: "#888", fontSize: "26px", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "16px" }}>
                 A different kind of travel conversation
               </p>
               <h1 style={{ fontSize: "clamp(28px, 5vw, 42px)", fontWeight: "300", lineHeight: 1.3, margin: 0 }}>
-                Let&apos;s find where<br />you actually belong.
+                Most trips start with a destination.<br />We start with you.
               </h1>
             </div>
             <button
