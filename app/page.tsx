@@ -40,8 +40,8 @@ export default function Home() {
         .nav-logo {
           font-family: 'Jost', sans-serif;
           font-weight: 300;
-          font-size: 0.68rem;
-          letter-spacing: 0.35em;
+          font-size: 0.9rem;
+          letter-spacing: 0.3em;
           text-transform: uppercase;
           color: rgba(255, 255, 255, 0.5);
           text-decoration: none;
@@ -56,7 +56,7 @@ export default function Home() {
         .nav-links a {
           font-family: 'Jost', sans-serif;
           font-weight: 300;
-          font-size: 0.65rem;
+          font-size: 0.85rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: rgba(255, 255, 255, 0.4);
@@ -102,7 +102,7 @@ export default function Home() {
         .headline-top {
           font-family: 'Cormorant Garamond', serif;
           font-weight: 300;
-          font-size: clamp(1.1rem, 2vw, 1.5rem);
+          font-size: clamp(1.3rem, 2.2vw, 1.7rem);
           line-height: 1.4;
           color: rgba(255, 255, 255, 0.55);
           letter-spacing: 0.02em;
@@ -113,9 +113,9 @@ export default function Home() {
           font-family: 'Cormorant Garamond', serif;
           font-weight: 300;
           font-style: italic;
-          font-size: clamp(1.6rem, 3vw, 2.4rem);
+          font-size: clamp(1.8rem, 3.2vw, 2.6rem);
           line-height: 1.3;
-          color: #c8c8c8;
+          color: #d0d0d0;
           letter-spacing: 0.02em;
           margin-bottom: 1.6rem;
         }
@@ -123,11 +123,11 @@ export default function Home() {
         .subline {
           font-family: 'Jost', sans-serif;
           font-weight: 300;
-          font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+          font-size: clamp(0.9rem, 1.5vw, 1.05rem);
           line-height: 1.85;
           color: rgba(255, 255, 255, 0.45);
           letter-spacing: 0.04em;
-          max-width: 440px;
+          max-width: 460px;
           margin-bottom: 2.8rem;
         }
 
@@ -135,7 +135,7 @@ export default function Home() {
           display: inline-block;
           font-family: 'Jost', sans-serif;
           font-weight: 300;
-          font-size: 0.65rem;
+          font-size: 0.8rem;
           letter-spacing: 0.3em;
           text-transform: uppercase;
           color: rgba(255, 255, 255, 0.75);
