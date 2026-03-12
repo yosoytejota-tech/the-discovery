@@ -127,7 +127,7 @@ export default function Home() {
           line-height: 1.85;
           color: rgba(255, 255, 255, 0.45);
           letter-spacing: 0.04em;
-          max-width: 460px;
+          max-width: 600px;
           margin-bottom: 2.8rem;
         }
 
@@ -135,12 +135,12 @@ export default function Home() {
           display: inline-block;
           font-family: 'Jost', sans-serif;
           font-weight: 300;
-          font-size: 0.8rem;
+          font-size: 0.95rem;
           letter-spacing: 0.3em;
           text-transform: uppercase;
           color: rgba(255, 255, 255, 0.75);
           border: 1px solid rgba(255, 255, 255, 0.25);
-          padding: 1rem 3rem;
+          padding: 1.2rem 3.5rem;
           text-decoration: none;
           transition: all 0.4s ease;
           background: transparent;
@@ -176,7 +176,8 @@ export default function Home() {
         <p className="headline-top">Most trips start with a destination.</p>
         <p className="headline-bottom">We start with you.</p>
         <p className="subline">
-          The Discovery is your personal travel architect — we uncover who you are as a traveler before we tell you where to go.
+          The Discovery is your personal travel architect —<br />
+          we uncover who you are as a traveler before we tell you where to go.
         </p>
         <Link href="/chat" className="cta">
           Start Your Discovery
