@@ -201,6 +201,7 @@ export async function POST(request: NextRequest) {
 
     const assistantMessage = content.text;
     const isComplete = /before you start booking/i.test(assistantMessage);
+    const isItinerary = assistantMessage.includes("TRIP AT A GLANCE");
 
     if (session_id) {
       const transcript = messages.length === 0
@@ -209,6 +210,7 @@ export async function POST(request: NextRequest) {
 
       const upsertData: Record<string, unknown> = { session_id, transcript };
       if (isComplete) upsertData.is_complete = true;
+      if (isItinerary) upsertData.itinerary = assistantMessage;
 
       await supabase
         .from("conversations")

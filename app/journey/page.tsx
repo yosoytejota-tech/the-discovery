@@ -1,25 +1,16 @@
 import { supabase } from "@/lib/supabase";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const dynamic = "force-dynamic";
-
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-};
 
 type Conversation = {
   id: string;
   session_id: string;
-  transcript: Message[];
   created_at: string;
   is_complete: boolean;
+  itinerary: string | null;
 };
-
-function getItinerary(transcript: Message[]): string {
-  const assistantMessages = transcript.filter(m => m.role === "assistant");
-  return assistantMessages[assistantMessages.length - 1]?.content ?? "";
-}
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -29,11 +20,24 @@ function formatDate(iso: string): string {
   });
 }
 
+const TIME_LABELS = /^(Morning|Afternoon|Evening)\s*[—–-]/i;
+
+const markdownComponents: Components = {
+  strong({ children }) {
+    const text = typeof children === "string" ? children : String(children ?? "");
+    if (TIME_LABELS.test(text)) {
+      return <strong className="time-label">{children}</strong>;
+    }
+    return <strong>{children}</strong>;
+  },
+};
+
 export default async function JourneyPage() {
   const { data, error } = await supabase
     .from("conversations")
-    .select("*")
+    .select("id, session_id, created_at, is_complete, itinerary")
     .eq("is_complete", true)
+    .not("itinerary", "is", null)
     .order("created_at", { ascending: false });
 
   const conversations: Conversation[] = data ?? [];
@@ -85,9 +89,9 @@ export default async function JourneyPage() {
         .journey-new-link:hover { color: rgba(245, 240, 232, 0.75); }
 
         .journey-body {
-          max-width: 760px;
+          max-width: 800px;
           margin: 0 auto;
-          padding: 72px 32px 96px;
+          padding: 80px 48px 120px;
         }
 
         .journey-page-title {
@@ -97,7 +101,7 @@ export default async function JourneyPage() {
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #6B7F8E;
-          margin-bottom: 56px;
+          margin-bottom: 64px;
         }
 
         .journey-empty {
@@ -105,13 +109,13 @@ export default async function JourneyPage() {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          padding-top: 100px;
-          gap: 32px;
+          padding-top: 120px;
+          gap: 36px;
         }
 
         .journey-empty p {
           font-family: var(--font-playfair), 'Playfair Display', serif;
-          font-size: 1.2rem;
+          font-size: 1.25rem;
           font-weight: 400;
           color: rgba(245, 240, 232, 0.35);
           line-height: 1.6;
@@ -124,7 +128,7 @@ export default async function JourneyPage() {
           text-transform: uppercase;
           color: rgba(245, 240, 232, 0.6);
           border: 1px solid #2874A6;
-          padding: 12px 32px;
+          padding: 13px 36px;
           text-decoration: none;
           transition: all 0.3s ease;
           display: inline-block;
@@ -136,8 +140,8 @@ export default async function JourneyPage() {
         }
 
         .journey-article {
-          margin-bottom: 80px;
-          padding-bottom: 80px;
+          margin-bottom: 100px;
+          padding-bottom: 100px;
           border-bottom: 1px solid rgba(40, 116, 166, 0.2);
         }
 
@@ -151,7 +155,7 @@ export default async function JourneyPage() {
           letter-spacing: 0.16em;
           text-transform: uppercase;
           color: #2874A6;
-          margin-bottom: 28px;
+          margin-bottom: 48px;
           display: flex;
           align-items: center;
           gap: 16px;
@@ -173,9 +177,9 @@ export default async function JourneyPage() {
           padding-top: 48px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .journey-header { padding: 18px 20px; }
-          .journey-body { padding: 48px 20px 72px; }
+          .journey-body { padding: 56px 24px 80px; }
         }
       `}</style>
 
@@ -199,19 +203,21 @@ export default async function JourneyPage() {
             </div>
           )}
 
-          {conversations.map((conv, index) => {
-            const itinerary = getItinerary(conv.transcript);
-            return (
-              <article key={conv.id} className="journey-article">
-                <p className="journey-meta">
-                  {formatDate(conv.created_at)} &nbsp;·&nbsp; Journey {conversations.length - index}
-                </p>
-                <div className="itinerary-body">
-                  <ReactMarkdown>{itinerary}</ReactMarkdown>
-                </div>
-              </article>
-            );
-          })}
+          {conversations.map((conv, index) => (
+            <article key={conv.id} className="journey-article">
+              <p className="journey-meta">
+                {formatDate(conv.created_at)} &nbsp;·&nbsp; Journey {conversations.length - index}
+              </p>
+              <div className="itinerary-body">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={markdownComponents}
+                >
+                  {conv.itinerary!}
+                </ReactMarkdown>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </>

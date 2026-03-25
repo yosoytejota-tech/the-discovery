@@ -38,20 +38,12 @@ body {
   animation: fadeInUp 0.4s ease both;
 }
 
-/* ── Markdown: assistant messages & journey page ─ */
+/* ── Markdown: assistant messages ─────────────── */
 
-.assistant-message p,
-.itinerary-body p {
-  margin: 0 0 1em;
-}
+.assistant-message p { margin: 0 0 1em; }
+.assistant-message p:last-child { margin-bottom: 0; }
 
-.assistant-message p:last-child,
-.itinerary-body p:last-child {
-  margin-bottom: 0;
-}
-
-.assistant-message h1, .assistant-message h2, .assistant-message h3,
-.itinerary-body h1, .itinerary-body h2, .itinerary-body h3 {
+.assistant-message h1, .assistant-message h2, .assistant-message h3 {
   font-family: var(--font-playfair), 'Playfair Display', serif;
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -59,33 +51,89 @@ body {
   color: #F5F0E8;
 }
 
-.assistant-message h1, .itinerary-body h1 { font-size: 1.4em; }
-.assistant-message h2, .itinerary-body h2 { font-size: 1.2em; }
-.assistant-message h3, .itinerary-body h3 {
-  font-size: 0.85em;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+.assistant-message h1 { font-size: 1.4em; }
+.assistant-message h2 { font-size: 1.2em; }
+.assistant-message h3 { font-size: 0.85em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.assistant-message strong { color: #F5F0E8; font-weight: 600; }
+.assistant-message ul, .assistant-message ol { padding-left: 1.5em; margin: 0.5em 0 1em; }
+.assistant-message li { margin-bottom: 0.3em; }
 
-.assistant-message strong, .itinerary-body strong {
-  color: #F5F0E8;
-  font-weight: 600;
-}
-
-.assistant-message ul, .assistant-message ol,
-.itinerary-body ul, .itinerary-body ol {
-  padding-left: 1.5em;
-  margin: 0.5em 0 1em;
-}
-
-.assistant-message li, .itinerary-body li {
-  margin-bottom: 0.3em;
-}
+/* ── Itinerary document (Journey page) ─────────── */
 
 .itinerary-body {
   font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
   font-size: 16px;
-  line-height: 1.85;
+  line-height: 1.95;
   color: #B8C4CC;
+}
+
+.itinerary-body p {
+  margin: 0 0 1.6em;
+}
+
+.itinerary-body p:last-child { margin-bottom: 0; }
+
+/* Destination / major section headers */
+.itinerary-body h1 {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 1.65em;
+  font-weight: 500;
+  color: #F5F0E8;
+  letter-spacing: 0.02em;
+  margin: 3.5em 0 1em;
+  padding-bottom: 0.6em;
+  border-bottom: 1px solid rgba(40, 116, 166, 0.4);
+}
+
+.itinerary-body h1:first-child { margin-top: 0; }
+
+/* Section headers (OVERVIEW, TRIP AT A GLANCE, etc.) */
+.itinerary-body h2 {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 1.3em;
+  font-weight: 500;
+  color: #F5F0E8;
+  letter-spacing: 0.02em;
+  margin: 3em 0 0.9em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid rgba(245, 240, 232, 0.1);
+}
+
+/* Day headers */
+.itinerary-body h3 {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #F5F0E8;
+  letter-spacing: 0.01em;
+  margin: 2.5em 0 0.7em;
+}
+
+/* Horizontal rules = destination/country breaks */
+.itinerary-body hr {
+  border: none;
+  border-top: 1px solid rgba(40, 116, 166, 0.4);
+  margin: 4em 0;
+}
+
+.itinerary-body strong { color: #F5F0E8; font-weight: 600; }
+
+/* Time-of-day labels styled via custom component */
+.itinerary-body .time-label {
+  font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+  font-size: 0.72em;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2874A6;
+}
+
+.itinerary-body ul, .itinerary-body ol {
+  padding-left: 1.6em;
+  margin: 0.6em 0 1.8em;
+}
+
+.itinerary-body li {
+  margin-bottom: 0.6em;
+  line-height: 1.75;
 }

@@ -15,10 +15,18 @@ export default function ChatPage() {
   const [started, setStarted] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  const resizeTextarea = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  };
 
   const startDiscovery = async () => {
     const newSessionId = crypto.randomUUID();
@@ -53,6 +61,9 @@ export default function ChatPage() {
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
     setLoading(true);
 
     try {
@@ -219,13 +230,8 @@ export default function ChatPage() {
           padding-bottom: 28px;
         }
 
-        .msg-row {
-          display: flex;
-        }
-
-        .msg-row-user {
-          justify-content: flex-end;
-        }
+        .msg-row { display: flex; }
+        .msg-row-user { justify-content: flex-end; }
 
         .msg-assistant {
           max-width: 88%;
@@ -247,6 +253,40 @@ export default function ChatPage() {
           font-size: 15px;
           line-height: 1.6;
           color: rgba(245, 240, 232, 0.75);
+        }
+
+        /* ── Itinerary ready card ── */
+        .itinerary-ready-card {
+          max-width: 88%;
+          background: #0D1B2A;
+          border: 1px solid rgba(245, 240, 232, 0.2);
+          padding: 24px 22px;
+        }
+
+        .itinerary-ready-text {
+          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-size: 17px;
+          line-height: 1.85;
+          color: rgba(245, 240, 232, 0.85);
+          margin-bottom: 22px;
+        }
+
+        .journey-cta-btn {
+          display: inline-block;
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.82rem;
+          font-weight: 500;
+          letter-spacing: 0.1em;
+          color: #2874A6;
+          border: 1px solid #2874A6;
+          padding: 11px 26px;
+          text-decoration: none;
+          transition: all 0.25s ease;
+        }
+
+        .journey-cta-btn:hover {
+          background: #2874A6;
+          color: #F5F0E8;
         }
 
         /* ── Typing indicator ── */
@@ -290,11 +330,15 @@ export default function ChatPage() {
           font-size: 15px;
           padding: 8px 0;
           resize: none;
+          overflow: hidden;
           outline: none;
           line-height: 1.6;
           transition: border-color 0.2s;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
         }
 
+        .chat-textarea::-webkit-scrollbar { display: none; }
         .chat-textarea::placeholder { color: rgba(245, 240, 232, 0.25); }
         .chat-textarea:focus { border-bottom-color: #2874A6; }
 
@@ -355,20 +399,36 @@ export default function ChatPage() {
           ) : (
             <>
               <div className="messages-area">
-                {messages.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={`msg-row message-fade-in ${msg.role === "user" ? "msg-row-user" : ""}`}
-                  >
-                    {msg.role === "assistant" ? (
-                      <div className="msg-assistant assistant-message">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
-                      </div>
-                    ) : (
-                      <div className="msg-user">{msg.content}</div>
-                    )}
-                  </div>
-                ))}
+                {messages.map((msg, i) => {
+                  const isItineraryMessage = msg.role === "assistant" &&
+                    /before you start booking/i.test(msg.content);
+
+                  return (
+                    <div
+                      key={i}
+                      className={`msg-row message-fade-in ${msg.role === "user" ? "msg-row-user" : ""}`}
+                    >
+                      {msg.role === "assistant" ? (
+                        isItineraryMessage ? (
+                          <div className="itinerary-ready-card">
+                            <p className="itinerary-ready-text">
+                              Your itinerary is ready. I&apos;ve built your full plan, day by day breakdown, and booking notes — everything you need is waiting for you.
+                            </p>
+                            <a href="/journey" className="journey-cta-btn">
+                              View Your Journey →
+                            </a>
+                          </div>
+                        ) : (
+                          <div className="msg-assistant assistant-message">
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          </div>
+                        )
+                      ) : (
+                        <div className="msg-user">{msg.content}</div>
+                      )}
+                    </div>
+                  );
+                })}
 
                 {loading && (
                   <div className="msg-row">
@@ -382,9 +442,10 @@ export default function ChatPage() {
 
               <div className="input-area">
                 <textarea
+                  ref={textareaRef}
                   className="chat-textarea"
                   value={input}
-                  onChange={e => setInput(e.target.value)}
+                  onChange={e => { setInput(e.target.value); resizeTextarea(); }}
                   onKeyDown={handleKeyDown}
                   placeholder="Your answer..."
                   disabled={loading}
