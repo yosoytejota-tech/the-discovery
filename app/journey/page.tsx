@@ -39,87 +39,181 @@ export default async function JourneyPage() {
   const conversations: Conversation[] = data ?? [];
 
   return (
-    <main style={{
-      minHeight: "100vh",
-      backgroundColor: "#0a0a0a",
-      color: "#f5f0e8",
-      fontFamily: "'Georgia', serif",
-    }}>
-      {/* Header */}
-      <header style={{
-        padding: "24px 40px",
-        borderBottom: "1px solid #1f1f1f",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}>
-        <a href="/" style={{ color: "#f5f0e8", textDecoration: "none", fontSize: "18px", letterSpacing: "0.05em" }}>
-          The Discovery
-        </a>
-        <a href="/chat" style={{ color: "#666", fontSize: "13px", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}>
-          New Journey
-        </a>
-      </header>
+    <>
+      <style>{`
+        .journey-root {
+          min-height: 100vh;
+          background: #0D1B2A;
+          color: #F5F0E8;
+        }
 
-      <div style={{
-        maxWidth: "720px",
-        margin: "0 auto",
-        padding: "64px 24px",
-      }}>
-        <h1 style={{ fontSize: "13px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#666", fontWeight: 400, marginBottom: "48px" }}>
-          Your Journeys
-        </h1>
+        .journey-header {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          padding: 20px 40px;
+          background: #0D1B2A;
+          border-bottom: 1px solid rgba(40, 116, 166, 0.25);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
 
-        {error && (
-          <p style={{ color: "#666", fontSize: "16px" }}>
-            Unable to load journeys at this time.
-          </p>
-        )}
+        .journey-header-logo {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-weight: 300;
+          font-size: 0.85rem;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.6);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
 
-        {!error && conversations.length === 0 && (
-          <div style={{ textAlign: "center", paddingTop: "80px" }}>
-            <p style={{ color: "#555", fontSize: "17px", lineHeight: 1.75, marginBottom: "32px" }}>
-              No completed itineraries yet.
-            </p>
-            <a
-              href="/chat"
-              style={{
-                color: "#f5f0e8",
-                border: "1px solid #333",
-                padding: "12px 28px",
-                fontSize: "13px",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                display: "inline-block",
-              }}
-            >
-              Begin Your Discovery
-            </a>
-          </div>
-        )}
+        .journey-header-logo:hover { color: #F5F0E8; }
 
-        {conversations.map((conv, index) => {
-          const itinerary = getItinerary(conv.transcript);
-          return (
-            <article
-              key={conv.id}
-              style={{
-                borderBottom: "1px solid #1f1f1f",
-                paddingBottom: "64px",
-                marginBottom: "64px",
-              }}
-            >
-              <p style={{ color: "#555", fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "24px" }}>
-                {formatDate(conv.created_at)} · Journey {conversations.length - index}
-              </p>
-              <div className="itinerary-body">
-                <ReactMarkdown>{itinerary}</ReactMarkdown>
-              </div>
-            </article>
-          );
-        })}
+        .journey-new-link {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.72rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.3);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+
+        .journey-new-link:hover { color: rgba(245, 240, 232, 0.75); }
+
+        .journey-body {
+          max-width: 760px;
+          margin: 0 auto;
+          padding: 72px 32px 96px;
+        }
+
+        .journey-page-title {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-weight: 300;
+          font-size: 0.72rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #6B7F8E;
+          margin-bottom: 56px;
+        }
+
+        .journey-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding-top: 100px;
+          gap: 32px;
+        }
+
+        .journey-empty p {
+          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-size: 1.2rem;
+          font-weight: 400;
+          color: rgba(245, 240, 232, 0.35);
+          line-height: 1.6;
+        }
+
+        .journey-empty-link {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.78rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.6);
+          border: 1px solid #2874A6;
+          padding: 12px 32px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          display: inline-block;
+        }
+
+        .journey-empty-link:hover {
+          background: #2874A6;
+          color: #F5F0E8;
+        }
+
+        .journey-article {
+          margin-bottom: 80px;
+          padding-bottom: 80px;
+          border-bottom: 1px solid rgba(40, 116, 166, 0.2);
+        }
+
+        .journey-article:last-child {
+          border-bottom: none;
+        }
+
+        .journey-meta {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.7rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: #2874A6;
+          margin-bottom: 28px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .journey-meta::before {
+          content: '';
+          display: inline-block;
+          width: 24px;
+          height: 1px;
+          background: #2874A6;
+          flex-shrink: 0;
+        }
+
+        .journey-error {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          color: #6B7F8E;
+          font-size: 15px;
+          padding-top: 48px;
+        }
+
+        @media (max-width: 600px) {
+          .journey-header { padding: 18px 20px; }
+          .journey-body { padding: 48px 20px 72px; }
+        }
+      `}</style>
+
+      <div className="journey-root">
+        <header className="journey-header">
+          <a href="/" className="journey-header-logo">The Discovery</a>
+          <a href="/chat" className="journey-new-link">New Journey</a>
+        </header>
+
+        <div className="journey-body">
+          <p className="journey-page-title">Your Journeys</p>
+
+          {error && (
+            <p className="journey-error">Unable to load journeys at this time.</p>
+          )}
+
+          {!error && conversations.length === 0 && (
+            <div className="journey-empty">
+              <p>No completed itineraries yet.</p>
+              <a href="/chat" className="journey-empty-link">Begin Your Discovery</a>
+            </div>
+          )}
+
+          {conversations.map((conv, index) => {
+            const itinerary = getItinerary(conv.transcript);
+            return (
+              <article key={conv.id} className="journey-article">
+                <p className="journey-meta">
+                  {formatDate(conv.created_at)} &nbsp;·&nbsp; Journey {conversations.length - index}
+                </p>
+                <div className="itinerary-body">
+                  <ReactMarkdown>{itinerary}</ReactMarkdown>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
-    </main>
+    </>
   );
 }

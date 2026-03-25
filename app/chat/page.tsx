@@ -78,195 +78,328 @@ export default function ChatPage() {
   };
 
   return (
-    <main style={{
-      minHeight: "100vh",
-      backgroundColor: "#0a0a0a",
-      color: "#f5f0e8",
-      fontFamily: "'Georgia', serif",
-      display: "flex",
-      flexDirection: "column",
-    }}>
-      {/* Header */}
-      <header style={{
-        padding: "24px 40px",
-        borderBottom: "1px solid #1f1f1f",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}>
-        <a href="/" style={{ color: "#f5f0e8", textDecoration: "none", fontSize: "18px", letterSpacing: "0.05em" }}>
-          The Discovery
-        </a>
-        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-          {started && (
-            <button
-              onClick={startOver}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "#555",
-                fontSize: "13px",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                padding: 0,
-              }}
-              onMouseEnter={e => { (e.target as HTMLButtonElement).style.color = "#f5f0e8"; }}
-              onMouseLeave={e => { (e.target as HTMLButtonElement).style.color = "#555"; }}
-            >
-              Start Over
-            </button>
-          )}
-          <a
-            href="/journey"
-            style={{ color: "#666", fontSize: "13px", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
-            onMouseEnter={e => { (e.target as HTMLAnchorElement).style.color = "#f5f0e8"; }}
-            onMouseLeave={e => { (e.target as HTMLAnchorElement).style.color = "#666"; }}
-          >
-            Your Journey
-          </a>
-        </div>
-      </header>
-
-      {/* Chat area */}
-      <div style={{
-        flex: 1,
-        maxWidth: "720px",
-        width: "100%",
-        margin: "0 auto",
-        padding: "40px 24px",
-        display: "flex",
-        flexDirection: "column",
-      }}>
-        {!started ? (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: "32px" }}>
-            <div>
-              <p style={{ color: "#888", fontSize: "26px", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "16px" }}>
-                A different kind of travel conversation
-              </p>
-              <h1 style={{ fontSize: "clamp(28px, 5vw, 42px)", fontWeight: "300", lineHeight: 1.3, margin: 0 }}>
-                Most trips start with a destination.<br />We start with you.
-              </h1>
-            </div>
-            <button
-              onClick={startDiscovery}
-              style={{
-                background: "transparent",
-                border: "1px solid #f5f0e8",
-                color: "#f5f0e8",
-                padding: "14px 36px",
-                fontSize: "14px",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={e => {
-                (e.target as HTMLButtonElement).style.background = "#f5f0e8";
-                (e.target as HTMLButtonElement).style.color = "#0a0a0a";
-              }}
-              onMouseLeave={e => {
-                (e.target as HTMLButtonElement).style.background = "transparent";
-                (e.target as HTMLButtonElement).style.color = "#f5f0e8";
-              }}
-            >
-              Begin
-            </button>
-          </div>
-        ) : (
-          <>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "32px", paddingBottom: "24px" }}>
-              {messages.map((msg, i) => (
-                <div key={i} style={{
-                  display: "flex",
-                  justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-                }}>
-                  <div style={{
-                    maxWidth: "85%",
-                    padding: msg.role === "assistant" ? "0" : "14px 20px",
-                    background: msg.role === "user" ? "#1a1a1a" : "transparent",
-                    border: msg.role === "user" ? "1px solid #2a2a2a" : "none",
-                    fontSize: "17px",
-                    lineHeight: "1.75",
-                    color: msg.role === "assistant" ? "#f5f0e8" : "#ccc",
-                  }} className={msg.role === "assistant" ? "assistant-message" : undefined}>
-                    {msg.role === "assistant" ? (
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    ) : (
-                      msg.content
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {loading && (
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#555" }}>
-                  <span style={{ fontSize: "24px", animation: "pulse 1.5s infinite" }}>·</span>
-                  <span style={{ fontSize: "24px", animation: "pulse 1.5s infinite 0.3s" }}>·</span>
-                  <span style={{ fontSize: "24px", animation: "pulse 1.5s infinite 0.6s" }}>·</span>
-                </div>
-              )}
-              <div ref={bottomRef} />
-            </div>
-
-            {/* Input area */}
-            <div style={{
-              borderTop: "1px solid #1f1f1f",
-              paddingTop: "24px",
-              display: "flex",
-              gap: "12px",
-              alignItems: "flex-end",
-            }}>
-              <textarea
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Your answer..."
-                disabled={loading}
-                rows={1}
-                style={{
-                  flex: 1,
-                  background: "transparent",
-                  border: "none",
-                  borderBottom: "1px solid #333",
-                  color: "#f5f0e8",
-                  fontSize: "16px",
-                  fontFamily: "'Georgia', serif",
-                  padding: "8px 0",
-                  resize: "none",
-                  outline: "none",
-                  lineHeight: "1.5",
-                }}
-              />
-              <button
-                onClick={sendMessage}
-                disabled={loading || !input.trim()}
-                style={{
-                  background: "transparent",
-                  border: "1px solid #333",
-                  color: loading || !input.trim() ? "#444" : "#f5f0e8",
-                  padding: "8px 20px",
-                  fontSize: "13px",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-                  transition: "all 0.2s",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Send
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
+    <>
       <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.2; }
-          50% { opacity: 1; }
+        .chat-root {
+          min-height: 100vh;
+          background: #0D1B2A;
+          color: #F5F0E8;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* ── Header ── */
+        .chat-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 100;
+          padding: 20px 40px;
+          background: #0D1B2A;
+          border-bottom: 1px solid rgba(40, 116, 166, 0.25);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .chat-header-logo {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-weight: 300;
+          font-size: 0.85rem;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.6);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+
+        .chat-header-logo:hover { color: #F5F0E8; }
+
+        .chat-header-actions {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+        }
+
+        .btn-ghost {
+          background: none;
+          border: none;
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.72rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.3);
+          cursor: pointer;
+          padding: 0;
+          transition: color 0.2s;
+          text-decoration: none;
+          display: inline-block;
+        }
+
+        .btn-ghost:hover { color: rgba(245, 240, 232, 0.75); }
+
+        /* ── Body ── */
+        .chat-body {
+          flex: 1;
+          max-width: 740px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 120px 28px 40px;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* ── Begin screen ── */
+        .begin-screen {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          gap: 0;
+          padding-bottom: 48px;
+        }
+
+        .begin-subline {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-weight: 300;
+          font-size: 0.75rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.35);
+          margin-bottom: 24px;
+          opacity: 0;
+          animation: fadeInUp 0.7s ease both;
+          animation-delay: 0.2s;
+        }
+
+        .begin-headline {
+          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-weight: 400;
+          font-size: clamp(1.8rem, 4vw, 2.8rem);
+          line-height: 1.35;
+          color: #F5F0E8;
+          margin-bottom: 48px;
+          opacity: 0;
+          animation: fadeInUp 0.7s ease both;
+          animation-delay: 0.65s;
+        }
+
+        .begin-btn {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-weight: 400;
+          font-size: 0.8rem;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: rgba(245, 240, 232, 0.75);
+          background: transparent;
+          border: 1px solid #2874A6;
+          padding: 14px 48px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          opacity: 0;
+          animation: fadeInUp 0.7s ease both;
+          animation-delay: 1.1s;
+        }
+
+        .begin-btn:hover {
+          background: #2874A6;
+          color: #F5F0E8;
+          letter-spacing: 0.33em;
+        }
+
+        /* ── Messages ── */
+        .messages-area {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 36px;
+          padding-bottom: 28px;
+        }
+
+        .msg-row {
+          display: flex;
+        }
+
+        .msg-row-user {
+          justify-content: flex-end;
+        }
+
+        .msg-assistant {
+          max-width: 88%;
+          border-left: 3px solid #2874A6;
+          padding: 4px 0 4px 24px;
+          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-size: 18px;
+          line-height: 1.9;
+          color: #F5F0E8;
+        }
+
+        .msg-user {
+          max-width: 70%;
+          background: #162435;
+          border: 1px solid rgba(40, 116, 166, 0.2);
+          padding: 12px 18px;
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 15px;
+          line-height: 1.6;
+          color: rgba(245, 240, 232, 0.75);
+        }
+
+        /* ── Typing indicator ── */
+        .typing-dots {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding-left: 28px;
+          border-left: 3px solid rgba(40, 116, 166, 0.3);
+        }
+
+        .typing-dots span {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: #2874A6;
+          opacity: 0.2;
+          animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* ── Input area ── */
+        .input-area {
+          border-top: 1px solid rgba(40, 116, 166, 0.2);
+          padding-top: 24px;
+          display: flex;
+          gap: 14px;
+          align-items: flex-end;
+        }
+
+        .chat-textarea {
+          flex: 1;
+          background: transparent;
+          border: none;
+          border-bottom: 1px solid rgba(40, 116, 166, 0.3);
+          color: #F5F0E8;
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 15px;
+          padding: 8px 0;
+          resize: none;
+          outline: none;
+          line-height: 1.6;
+          transition: border-color 0.2s;
+        }
+
+        .chat-textarea::placeholder { color: rgba(245, 240, 232, 0.25); }
+        .chat-textarea:focus { border-bottom-color: #2874A6; }
+
+        .send-btn {
+          background: transparent;
+          border: 1px solid rgba(40, 116, 166, 0.4);
+          color: rgba(245, 240, 232, 0.4);
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.72rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          padding: 8px 22px;
+          cursor: not-allowed;
+          transition: all 0.2s;
+          white-space: nowrap;
+        }
+
+        .send-btn.active {
+          border-color: #2874A6;
+          color: rgba(245, 240, 232, 0.8);
+          cursor: pointer;
+        }
+
+        .send-btn.active:hover {
+          background: #2874A6;
+          color: #F5F0E8;
+        }
+
+        @media (max-width: 600px) {
+          .chat-header { padding: 18px 20px; }
+          .chat-body { padding: 100px 20px 32px; }
+          .msg-assistant { font-size: 16px; }
         }
       `}</style>
-    </main>
+
+      <div className="chat-root">
+        <header className="chat-header">
+          <a href="/" className="chat-header-logo">The Discovery</a>
+          <div className="chat-header-actions">
+            {started && (
+              <button className="btn-ghost" onClick={startOver}>Start Over</button>
+            )}
+            <a href="/journey" className="btn-ghost">Your Journey</a>
+          </div>
+        </header>
+
+        <div className="chat-body">
+          {!started ? (
+            <div className="begin-screen">
+              <p className="begin-subline">A different kind of travel conversation</p>
+              <h1 className="begin-headline">
+                Most trips start with a destination.<br />We start with you.
+              </h1>
+              <button className="begin-btn" onClick={startDiscovery}>
+                Begin
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="messages-area">
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`msg-row message-fade-in ${msg.role === "user" ? "msg-row-user" : ""}`}
+                  >
+                    {msg.role === "assistant" ? (
+                      <div className="msg-assistant assistant-message">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <div className="msg-user">{msg.content}</div>
+                    )}
+                  </div>
+                ))}
+
+                {loading && (
+                  <div className="msg-row">
+                    <div className="typing-dots">
+                      <span /><span /><span />
+                    </div>
+                  </div>
+                )}
+                <div ref={bottomRef} />
+              </div>
+
+              <div className="input-area">
+                <textarea
+                  className="chat-textarea"
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Your answer..."
+                  disabled={loading}
+                  rows={1}
+                />
+                <button
+                  className={`send-btn${!loading && input.trim() ? " active" : ""}`}
+                  onClick={sendMessage}
+                  disabled={loading || !input.trim()}
+                >
+                  Send
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
