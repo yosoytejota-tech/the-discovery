@@ -12,6 +12,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
+  const [sessionId, setSessionId] = useState<string>("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,13 +20,15 @@ export default function ChatPage() {
   }, [messages, loading]);
 
   const startDiscovery = async () => {
+    const newSessionId = crypto.randomUUID();
+    setSessionId(newSessionId);
     setStarted(true);
     setLoading(true);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [] }),
+        body: JSON.stringify({ messages: [], session_id: newSessionId }),
       });
       const data = await res.json();
       setMessages([{ role: "assistant", content: data.message }]);
@@ -34,6 +37,13 @@ export default function ChatPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const startOver = () => {
+    setMessages([]);
+    setInput("");
+    setStarted(false);
+    setSessionId("");
   };
 
   const sendMessage = async () => {
@@ -48,7 +58,7 @@ export default function ChatPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, session_id: sessionId }),
       });
       const data = await res.json();
       setMessages([...newMessages, { role: "assistant", content: data.message }]);
@@ -86,9 +96,35 @@ export default function ChatPage() {
         <a href="/" style={{ color: "#f5f0e8", textDecoration: "none", fontSize: "18px", letterSpacing: "0.05em" }}>
           The Discovery
         </a>
-        <span style={{ color: "#666", fontSize: "13px", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-          Your Journey
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          {started && (
+            <button
+              onClick={startOver}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#555",
+                fontSize: "13px",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                padding: 0,
+              }}
+              onMouseEnter={e => { (e.target as HTMLButtonElement).style.color = "#f5f0e8"; }}
+              onMouseLeave={e => { (e.target as HTMLButtonElement).style.color = "#555"; }}
+            >
+              Start Over
+            </button>
+          )}
+          <a
+            href="/journey"
+            style={{ color: "#666", fontSize: "13px", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
+            onMouseEnter={e => { (e.target as HTMLAnchorElement).style.color = "#f5f0e8"; }}
+            onMouseLeave={e => { (e.target as HTMLAnchorElement).style.color = "#666"; }}
+          >
+            Your Journey
+          </a>
+        </div>
       </header>
 
       {/* Chat area */}

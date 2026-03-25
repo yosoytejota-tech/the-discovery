@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -137,7 +138,7 @@ Why do you want to travel?"`;
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages } = await request.json();
+    const { messages, session_id } = await request.json();
 
     const response = await client.messages.create({
       model: "claude-sonnet-4-6",
@@ -153,7 +154,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unexpected response type" }, { status: 500 });
     }
 
-    return NextResponse.json({ message: content.text });
+    const assistantMessage = content.text;
+    const isComplete = assistantMessage.toLowerCase().includes("before you start booking");
+
+    if (session_id) {
+      const transcript = messages.length === 0
+        ? [{ role: "assistant", content: assistantMessage }]
+        : [...messages, { role: "assistant", content: assistantMessage }];
+
+      await supabase
+        .from("conversations")
+        .upsert(
+          { session_id, transcript, is_complete: isComplete },
+          { onConflict: "session_id" }
+        );
+    }
+
+    return NextResponse.json({ message: assistantMessage });
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json({ error: "Failed to get response" }, { status: 500 });
