@@ -20,6 +20,16 @@ function formatDate(iso: string): string {
   });
 }
 
+function cleanItinerary(raw: string): string {
+  // Strip everything before the first occurrence of THE DISCOVERY or OVERVIEW
+  const startMatch = raw.search(/\b(THE DISCOVERY|OVERVIEW)\b/);
+  const trimmed = startMatch !== -1 ? raw.slice(startMatch) : raw;
+
+  // Strip everything from "before you start booking" onward (the refinement question)
+  const endMatch = trimmed.search(/before you start booking/i);
+  return endMatch !== -1 ? trimmed.slice(0, endMatch).trimEnd() : trimmed;
+}
+
 const TIME_LABELS = /^(Morning|Afternoon|Evening)\s*[—–-]/i;
 
 const markdownComponents: Components = {
@@ -87,6 +97,24 @@ export default async function JourneyPage() {
         }
 
         .journey-new-link:hover { color: rgba(245, 240, 232, 0.75); }
+
+        .journey-back-btn {
+          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-size: 0.72rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #2874A6;
+          border: 1px solid #2874A6;
+          padding: 7px 18px;
+          text-decoration: none;
+          transition: all 0.25s ease;
+          display: inline-block;
+        }
+
+        .journey-back-btn:hover {
+          background: #2874A6;
+          color: #F5F0E8;
+        }
 
         .journey-body {
           max-width: 800px;
@@ -186,7 +214,10 @@ export default async function JourneyPage() {
       <div className="journey-root">
         <header className="journey-header">
           <a href="/" className="journey-header-logo">The Discovery</a>
-          <a href="/chat" className="journey-new-link">New Journey</a>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <a href="/chat" className="journey-back-btn">← Back to conversation</a>
+            <a href="/chat" className="journey-new-link">New Journey</a>
+          </div>
         </header>
 
         <div className="journey-body">
@@ -213,7 +244,7 @@ export default async function JourneyPage() {
                   remarkPlugins={[remarkGfm]}
                   components={markdownComponents}
                 >
-                  {conv.itinerary!}
+                  {cleanItinerary(conv.itinerary!)}
                 </ReactMarkdown>
               </div>
             </article>
