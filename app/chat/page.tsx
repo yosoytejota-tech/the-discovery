@@ -229,8 +229,9 @@ export default function ChatPage() {
 
         .msg-assistant {
           max-width: 88%;
-          border-left: 3px solid #2874A6;
-          padding: 4px 0 4px 24px;
+          background: #0D1B2A;
+          border: 1px solid rgba(245, 240, 232, 0.2);
+          padding: 12px 18px;
           font-family: var(--font-playfair), 'Playfair Display', serif;
           font-size: 18px;
           line-height: 1.9;
@@ -240,7 +241,7 @@ export default function ChatPage() {
         .msg-user {
           max-width: 70%;
           background: #162435;
-          border: 1px solid rgba(40, 116, 166, 0.2);
+          border: 1px solid rgba(245, 240, 232, 0.2);
           padding: 12px 18px;
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-size: 15px;
@@ -253,8 +254,9 @@ export default function ChatPage() {
           display: flex;
           align-items: center;
           gap: 6px;
-          padding-left: 28px;
-          border-left: 3px solid rgba(40, 116, 166, 0.3);
+          padding: 12px 18px;
+          border: 1px solid rgba(245, 240, 232, 0.12);
+          background: #0D1B2A;
         }
 
         .typing-dots span {
