@@ -21,8 +21,8 @@ function formatDate(iso: string): string {
 }
 
 function cleanItinerary(raw: string): string {
-  // Strip everything before the first occurrence of THE DISCOVERY or OVERVIEW
-  const startMatch = raw.search(/\b(THE DISCOVERY|OVERVIEW)\b/);
+  // Strip everything before the evocative trip title (YOUR ...) or OVERVIEW
+  const startMatch = raw.search(/^(YOUR [A-Z]|OVERVIEW\b)/m);
   const trimmed = startMatch !== -1 ? raw.slice(startMatch) : raw;
 
   // Strip everything from "before you start booking" onward (the refinement question)
