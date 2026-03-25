@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   role: "user" | "assistant";
@@ -188,9 +189,12 @@ export default function ChatPage() {
                     fontSize: "17px",
                     lineHeight: "1.75",
                     color: msg.role === "assistant" ? "#f5f0e8" : "#ccc",
-                    whiteSpace: "pre-wrap",
-                  }}>
-                    {msg.content}
+                  }} className={msg.role === "assistant" ? "assistant-message" : undefined}>
+                    {msg.role === "assistant" ? (
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                 </div>
               ))}

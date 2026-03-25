@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
 
     const response = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 2048,
+      max_tokens: 8000,
       system: SYSTEM_PROMPT,
       messages: messages.length === 0
         ? [{ role: "user", content: "BEGIN" }]
@@ -155,19 +155,19 @@ export async function POST(request: NextRequest) {
     }
 
     const assistantMessage = content.text;
-    const isComplete = assistantMessage.toLowerCase().includes("before you start booking");
+    const isComplete = /before you start booking/i.test(assistantMessage);
 
     if (session_id) {
       const transcript = messages.length === 0
         ? [{ role: "assistant", content: assistantMessage }]
         : [...messages, { role: "assistant", content: assistantMessage }];
 
+      const upsertData: Record<string, unknown> = { session_id, transcript };
+      if (isComplete) upsertData.is_complete = true;
+
       await supabase
         .from("conversations")
-        .upsert(
-          { session_id, transcript, is_complete: isComplete },
-          { onConflict: "session_id" }
-        );
+        .upsert(upsertData, { onConflict: "session_id" });
     }
 
     return NextResponse.json({ message: assistantMessage });

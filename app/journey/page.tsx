@@ -1,4 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import ReactMarkdown from "react-markdown";
+
+export const dynamic = "force-dynamic";
 
 type Message = {
   role: "user" | "assistant";
@@ -110,13 +113,8 @@ export default async function JourneyPage() {
               <p style={{ color: "#555", fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "24px" }}>
                 {formatDate(conv.created_at)} · Journey {conversations.length - index}
               </p>
-              <div style={{
-                fontSize: "16px",
-                lineHeight: "1.8",
-                color: "#c8c0b0",
-                whiteSpace: "pre-wrap",
-              }}>
-                {itinerary}
+              <div className="itinerary-body">
+                <ReactMarkdown>{itinerary}</ReactMarkdown>
               </div>
             </article>
           );

@@ -24,3 +24,48 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Markdown rendering for assistant messages and journey page */
+.assistant-message p,
+.itinerary-body p {
+  margin: 0 0 1em;
+}
+
+.assistant-message p:last-child,
+.itinerary-body p:last-child {
+  margin-bottom: 0;
+}
+
+.assistant-message h1, .assistant-message h2, .assistant-message h3,
+.itinerary-body h1, .itinerary-body h2, .itinerary-body h3 {
+  font-family: 'Georgia', serif;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  margin: 1.5em 0 0.5em;
+  color: #f5f0e8;
+}
+
+.assistant-message h1, .itinerary-body h1 { font-size: 1.3em; }
+.assistant-message h2, .itinerary-body h2 { font-size: 1.15em; }
+.assistant-message h3, .itinerary-body h3 { font-size: 1em; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.assistant-message strong, .itinerary-body strong {
+  color: #f5f0e8;
+  font-weight: 600;
+}
+
+.assistant-message ul, .assistant-message ol,
+.itinerary-body ul, .itinerary-body ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0 1em;
+}
+
+.assistant-message li, .itinerary-body li {
+  margin-bottom: 0.25em;
+}
+
+.itinerary-body {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #c8c0b0;
+}
