@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -42,13 +43,23 @@ const markdownComponents: Components = {
   },
 };
 
-export default async function JourneyPage() {
-  const { data, error } = await supabase
+export default async function JourneyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ session?: string }>;
+}) {
+  const { session } = await searchParams;
+
+  const query = supabase
     .from("conversations")
     .select("id, session_id, created_at, is_complete, itinerary")
     .eq("is_complete", true)
-    .not("itinerary", "is", null)
-    .order("created_at", { ascending: false });
+    .not("itinerary", "is", null);
+
+  const { data, error } = await (session
+    ? query.eq("session_id", session)
+    : query
+  ).order("created_at", { ascending: false });
 
   const conversations: Conversation[] = data ?? [];
 
@@ -215,8 +226,8 @@ export default async function JourneyPage() {
         <header className="journey-header">
           <a href="/" className="journey-header-logo">The Discovery</a>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <a href="/chat" className="journey-back-btn">← Back to conversation</a>
-            <a href="/chat" className="journey-new-link">New Journey</a>
+            <Link href="/chat" className="journey-back-btn">← Back to conversation</Link>
+            <Link href="/chat" className="journey-new-link">New Journey</Link>
           </div>
         </header>
 

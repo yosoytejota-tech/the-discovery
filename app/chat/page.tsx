@@ -381,7 +381,7 @@ export default function ChatPage() {
             {started && (
               <button className="btn-ghost" onClick={startOver}>Start Over</button>
             )}
-            <a href="/journey" className="btn-ghost">Your Journey</a>
+            <a href={sessionId ? `/journey?session=${sessionId}` : "/journey"} className="btn-ghost">Your Journey</a>
           </div>
         </header>
 
@@ -414,7 +414,7 @@ export default function ChatPage() {
                             <p className="itinerary-ready-text">
                               Your itinerary is ready. I&apos;ve built your full plan, day by day breakdown, and booking notes — everything you need is waiting for you.
                             </p>
-                            <a href="/journey" className="journey-cta-btn">
+                            <a href={`/journey?session=${sessionId}`} className="journey-cta-btn">
                               View Your Journey →
                             </a>
                           </div>
