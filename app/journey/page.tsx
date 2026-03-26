@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -26,8 +25,8 @@ function cleanItinerary(raw: string): string {
   const startMatch = raw.search(/^(YOUR [A-Z]|OVERVIEW\b)/m);
   const trimmed = startMatch !== -1 ? raw.slice(startMatch) : raw;
 
-  // Strip everything from "before you start booking" onward (the refinement question)
-  const endMatch = trimmed.search(/before you start booking/i);
+  // Strip the post-itinerary refinement question (full sentence or partial)
+  const endMatch = trimmed.search(/Is there anything here you want|before you start booking/i);
   return endMatch !== -1 ? trimmed.slice(0, endMatch).trimEnd() : trimmed;
 }
 
@@ -50,16 +49,16 @@ export default async function JourneyPage({
 }) {
   const { session } = await searchParams;
 
-  const query = supabase
-    .from("conversations")
-    .select("id, session_id, created_at, is_complete, itinerary")
-    .eq("is_complete", true)
-    .not("itinerary", "is", null);
-
-  const { data, error } = await (session
-    ? query.eq("session_id", session)
-    : query
-  ).order("created_at", { ascending: false });
+  // Without a session param, show nothing rather than leaking all rows
+  const { data, error } = session
+    ? await supabase
+        .from("conversations")
+        .select("id, session_id, created_at, is_complete, itinerary")
+        .eq("session_id", session)
+        .eq("is_complete", true)
+        .not("itinerary", "is", null)
+        .order("created_at", { ascending: false })
+    : { data: [], error: null };
 
   const conversations: Conversation[] = data ?? [];
 
@@ -225,9 +224,9 @@ export default async function JourneyPage({
       <div className="journey-root">
         <header className="journey-header">
           <a href="/" className="journey-header-logo">The Discovery</a>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <Link href="/chat" className="journey-back-btn">← Back to conversation</Link>
-            <Link href="/chat" className="journey-new-link">New Journey</Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px", position: "relative", zIndex: 10 }}>
+            <a href="/chat" className="journey-back-btn">← Back to conversation</a>
+            <a href="/chat" className="journey-new-link">New Journey</a>
           </div>
         </header>
 

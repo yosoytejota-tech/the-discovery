@@ -211,7 +211,13 @@ export async function POST(request: NextRequest) {
 
       const upsertData: Record<string, unknown> = { session_id, transcript };
       if (isComplete) upsertData.is_complete = true;
-      if (isItinerary) upsertData.itinerary = assistantMessage;
+      if (isItinerary) {
+        // Strip the post-itinerary refinement question before saving
+        const endMatch = assistantMessage.search(/Is there anything here you want|before you start booking/i);
+        upsertData.itinerary = endMatch !== -1
+          ? assistantMessage.slice(0, endMatch).trimEnd()
+          : assistantMessage;
+      }
 
       await supabase
         .from("conversations")
