@@ -9,8 +9,7 @@ export async function GET(req: NextRequest) {
     .from("conversations")
     .select("transcript")
     .eq("session_id", session)
-    .is("itinerary", null)
-    .maybeSingle();
+    .single();
 
   return NextResponse.json({ messages: data?.transcript ?? [] });
 }
