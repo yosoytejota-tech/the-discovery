@@ -272,20 +272,28 @@ So let's start simple:
  
 Why do you want to travel?"`;
 
-function extractItinerary(text: string): string {
+function extractItinerary(text: string): string | null {
   const lines = text.split("\n");
 
-  // Top strip: discard everything before the first all-caps line or a line beginning with THE DISCOVERY
-  let startIdx = 0;
+  // Top strip: find first line that is entirely uppercase (after stripping markdown
+  // prefixes like ##, **) or begins with THE DISCOVERY.
+  let startIdx: number | null = null;
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trim();
     if (!trimmed) continue;
-    const allCaps = /^[A-Z][A-Z0-9\s,:''\-–—.!?()/]+$/.test(trimmed);
-    const isTitle = /^THE DISCOVERY/i.test(trimmed);
+    const stripped = trimmed.replace(/^[#*_`>\s]+/, "").replace(/[*_`\s]+$/, "");
+    if (!stripped) continue;
+    const allCaps = stripped === stripped.toUpperCase() && /[A-Z]/.test(stripped);
+    const isTitle = /^THE DISCOVERY/i.test(stripped);
     if (allCaps || isTitle) {
       startIdx = i;
       break;
     }
+  }
+
+  if (startIdx === null) {
+    console.error("[extractItinerary] No all-caps title line found — itinerary not saved.");
+    return null;
   }
 
   // Bottom strip: discard the refinement question line and everything after it
@@ -337,7 +345,8 @@ export async function POST(request: NextRequest) {
       const upsertData: Record<string, unknown> = { session_id, transcript };
       if (isComplete) upsertData.is_complete = true;
       if (isItinerary) {
-        upsertData.itinerary = extractItinerary(assistantMessage);
+        const itinerary = extractItinerary(assistantMessage);
+        if (itinerary !== null) upsertData.itinerary = itinerary;
       }
 
       await supabase
