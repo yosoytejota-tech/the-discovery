@@ -470,7 +470,7 @@ export default function ChatPage() {
               <div className="messages-area">
                 {messages.map((msg, i) => {
                   const isItineraryMessage = msg.role === "assistant" &&
-                    /before you start booking/i.test(msg.content);
+                    /Give me a few minutes to put your itinerary together/i.test(msg.content);
 
                   return (
                     <div

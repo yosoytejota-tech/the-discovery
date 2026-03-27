@@ -294,15 +294,22 @@ export async function POST(request: NextRequest) {
     const isComplete = /before you start booking/i.test(assistantMessage);
     const isItinerary = assistantMessage.includes("TRIP AT A GLANCE");
 
+    const ITINERARY_BRIDGE =
+      "I have everything I need. Give me a few minutes to put your itinerary together — once it's ready, take a look and come back here if you want to adjust anything.";
+
+    // What we show in chat — bridge message for itineraries, full response otherwise
+    const displayMessage = isItinerary ? ITINERARY_BRIDGE : assistantMessage;
+
     if (session_id) {
+      // Store the bridge message in the transcript so the chat restores correctly
       const transcript = messages.length === 0
-        ? [{ role: "assistant", content: assistantMessage }]
-        : [...messages, { role: "assistant", content: assistantMessage }];
+        ? [{ role: "assistant", content: displayMessage }]
+        : [...messages, { role: "assistant", content: displayMessage }];
 
       const upsertData: Record<string, unknown> = { session_id, transcript };
       if (isComplete) upsertData.is_complete = true;
       if (isItinerary) {
-        // Strip the post-itinerary refinement question before saving
+        // Extract and save the full itinerary from the real Claude response
         const endMatch = assistantMessage.search(/Is there anything here you want|before you start booking/i);
         upsertData.itinerary = endMatch !== -1
           ? assistantMessage.slice(0, endMatch).trimEnd()
@@ -314,7 +321,7 @@ export async function POST(request: NextRequest) {
         .upsert(upsertData, { onConflict: "session_id" });
     }
 
-    return NextResponse.json({ message: assistantMessage });
+    return NextResponse.json({ message: displayMessage });
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json({ error: "Failed to get response" }, { status: 500 });
