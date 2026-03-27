@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Suspense } from "react";
+import { SessionRedirect, NewJourneyBtn } from "./SessionGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -221,12 +223,16 @@ export default async function JourneyPage({
         }
       `}</style>
 
+      <Suspense fallback={null}>
+        <SessionRedirect />
+      </Suspense>
+
       <div className="journey-root">
         <header className="journey-header">
           <a href="/" className="journey-header-logo">The Discovery</a>
           <div style={{ display: "flex", alignItems: "center", gap: "20px", position: "relative", zIndex: 10 }}>
             <a href="/chat" className="journey-back-btn">← Back to conversation</a>
-            <a href="/chat" className="journey-new-link">New Journey</a>
+            <NewJourneyBtn className="journey-new-link" />
           </div>
         </header>
 
