@@ -272,6 +272,34 @@ So let's start simple:
  
 Why do you want to travel?"`;
 
+function extractItinerary(text: string): string {
+  const lines = text.split("\n");
+
+  // Top strip: discard everything before the first all-caps line or a line beginning with THE DISCOVERY
+  let startIdx = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) continue;
+    const allCaps = /^[A-Z][A-Z0-9\s,:''\-–—.!?()/]+$/.test(trimmed);
+    const isTitle = /^THE DISCOVERY/i.test(trimmed);
+    if (allCaps || isTitle) {
+      startIdx = i;
+      break;
+    }
+  }
+
+  // Bottom strip: discard the refinement question line and everything after it
+  let endIdx = lines.length;
+  for (let i = startIdx; i < lines.length; i++) {
+    if (/Is there anything here you want to go deeper on/i.test(lines[i])) {
+      endIdx = i;
+      break;
+    }
+  }
+
+  return lines.slice(startIdx, endIdx).join("\n").trimEnd();
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { messages, session_id } = await request.json();
@@ -309,11 +337,7 @@ export async function POST(request: NextRequest) {
       const upsertData: Record<string, unknown> = { session_id, transcript };
       if (isComplete) upsertData.is_complete = true;
       if (isItinerary) {
-        // Extract and save the full itinerary from the real Claude response
-        const endMatch = assistantMessage.search(/Is there anything here you want|before you start booking/i);
-        upsertData.itinerary = endMatch !== -1
-          ? assistantMessage.slice(0, endMatch).trimEnd()
-          : assistantMessage;
+        upsertData.itinerary = extractItinerary(assistantMessage);
       }
 
       await supabase

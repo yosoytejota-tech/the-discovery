@@ -29,7 +29,37 @@ function cleanItinerary(raw: string): string {
 
   // Strip the post-itinerary refinement question (full sentence or partial)
   const endMatch = trimmed.search(/Is there anything here you want|before you start booking/i);
-  return endMatch !== -1 ? trimmed.slice(0, endMatch).trimEnd() : trimmed;
+  const cleaned = endMatch !== -1 ? trimmed.slice(0, endMatch).trimEnd() : trimmed;
+
+  // Insert blank lines between consecutive field lines in the TRIP AT A GLANCE
+  // section so ReactMarkdown renders each field as its own paragraph.
+  const lines = cleaned.split("\n");
+  const out: string[] = [];
+  let inGlance = false;
+  let glanceSawContent = false;
+
+  for (const line of lines) {
+    if (/TRIP AT A GLANCE/i.test(line)) {
+      inGlance = true;
+      glanceSawContent = false;
+      out.push(line);
+      continue;
+    }
+    if (inGlance) {
+      if (line.trim() === "") {
+        // A blank line after content closes the section
+        if (glanceSawContent) inGlance = false;
+        out.push(line);
+        continue;
+      }
+      // Non-empty field: insert a blank separator before it
+      if (glanceSawContent) out.push("");
+      glanceSawContent = true;
+    }
+    out.push(line);
+  }
+
+  return out.join("\n");
 }
 
 const TIME_LABELS = /^(Morning|Afternoon|Evening)\s*[—–-]/i;
