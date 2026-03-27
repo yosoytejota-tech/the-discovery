@@ -14,12 +14,22 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const distFromBottom = document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
+      setShowScrollBtn(distFromBottom > 120);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const resizeTextarea = () => {
     const el = textareaRef.current;
@@ -156,7 +166,7 @@ export default function ChatPage() {
           max-width: 740px;
           width: 100%;
           margin: 0 auto;
-          padding: 120px 28px 40px;
+          padding: 120px 28px 110px;
           display: flex;
           flex-direction: column;
         }
@@ -227,7 +237,7 @@ export default function ChatPage() {
           display: flex;
           flex-direction: column;
           gap: 36px;
-          padding-bottom: 28px;
+          padding-bottom: 0;
         }
 
         .msg-row { display: flex; }
@@ -311,10 +321,46 @@ export default function ChatPage() {
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 
+        /* ── Scroll to bottom button ── */
+        .scroll-btn {
+          position: fixed;
+          bottom: 90px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 60;
+          background: #0D1B2A;
+          border: 1px solid #2874A6;
+          color: #2874A6;
+          width: 34px;
+          height: 34px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+          padding: 0;
+        }
+
+        .scroll-btn:hover {
+          background: #2874A6;
+          color: #F5F0E8;
+        }
+
         /* ── Input area ── */
         .input-area {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 50;
+          background: #0D1B2A;
           border-top: 1px solid rgba(40, 116, 166, 0.2);
-          padding-top: 24px;
+          padding: 20px 28px 24px;
+        }
+
+        .input-area-inner {
+          max-width: 740px;
+          margin: 0 auto;
           display: flex;
           gap: 14px;
           align-items: flex-end;
@@ -369,7 +415,8 @@ export default function ChatPage() {
 
         @media (max-width: 600px) {
           .chat-header { padding: 18px 20px; }
-          .chat-body { padding: 100px 20px 32px; }
+          .chat-body { padding: 100px 20px 110px; }
+          .input-area { padding: 16px 20px 20px; }
           .msg-assistant { font-size: 16px; }
         }
       `}</style>
@@ -440,24 +487,38 @@ export default function ChatPage() {
                 <div ref={bottomRef} />
               </div>
 
-              <div className="input-area">
-                <textarea
-                  ref={textareaRef}
-                  className="chat-textarea"
-                  value={input}
-                  onChange={e => { setInput(e.target.value); resizeTextarea(); }}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Your answer..."
-                  disabled={loading}
-                  rows={1}
-                />
+              {showScrollBtn && (
                 <button
-                  className={`send-btn${!loading && input.trim() ? " active" : ""}`}
-                  onClick={sendMessage}
-                  disabled={loading || !input.trim()}
+                  className="scroll-btn"
+                  onClick={() => bottomRef.current?.scrollIntoView({ behavior: "smooth" })}
+                  aria-label="Scroll to bottom"
                 >
-                  Send
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 4.5L7 9.5L12 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </button>
+              )}
+
+              <div className="input-area">
+                <div className="input-area-inner">
+                  <textarea
+                    ref={textareaRef}
+                    className="chat-textarea"
+                    value={input}
+                    onChange={e => { setInput(e.target.value); resizeTextarea(); }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Your answer..."
+                    disabled={loading}
+                    rows={1}
+                  />
+                  <button
+                    className={`send-btn${!loading && input.trim() ? " active" : ""}`}
+                    onClick={sendMessage}
+                    disabled={loading || !input.trim()}
+                  >
+                    Send
+                  </button>
+                </div>
               </div>
             </>
           )}
