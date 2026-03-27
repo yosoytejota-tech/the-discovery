@@ -12,6 +12,8 @@ type Conversation = {
   created_at: string;
   is_complete: boolean;
   itinerary: string | null;
+  version: number | null;
+  title: string | null;
 };
 
 function formatDate(iso: string): string {
@@ -47,22 +49,30 @@ const markdownComponents: Components = {
 export default async function JourneyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session?: string }>;
+  searchParams: Promise<{ session?: string; version?: string }>;
 }) {
-  const { session } = await searchParams;
+  const { session, version } = await searchParams;
 
-  // Without a session param, show nothing rather than leaking all rows
-  const { data, error } = session
-    ? await supabase
-        .from("conversations")
-        .select("id, session_id, created_at, is_complete, itinerary")
-        .eq("session_id", session)
-        .eq("is_complete", true)
-        .not("itinerary", "is", null)
-        .order("created_at", { ascending: false })
-    : { data: [], error: null };
+  let conversation: Conversation | null = null;
+  let error: unknown = null;
 
-  const conversations: Conversation[] = data ?? [];
+  if (session) {
+    let query = supabase
+      .from("conversations")
+      .select("id, session_id, created_at, is_complete, itinerary, version, title")
+      .eq("session_id", session)
+      .not("itinerary", "is", null);
+
+    if (version) {
+      query = query.eq("version", parseInt(version));
+    } else {
+      query = query.order("version", { ascending: false }).limit(1);
+    }
+
+    const { data, error: err } = await query.maybeSingle();
+    conversation = data ?? null;
+    error = err;
+  }
 
   return (
     <>
@@ -237,34 +247,37 @@ export default async function JourneyPage({
         </header>
 
         <div className="journey-body">
-          <p className="journey-page-title">Your Journeys</p>
+          <p className="journey-page-title">Your Journey</p>
 
           {error && (
-            <p className="journey-error">Unable to load journeys at this time.</p>
+            <p className="journey-error">Unable to load your journey at this time.</p>
           )}
 
-          {!error && conversations.length === 0 && (
+          {!error && !conversation && (
             <div className="journey-empty">
-              <p>No completed itineraries yet.</p>
+              <p>No completed itinerary found.</p>
               <a href="/chat" className="journey-empty-link">Begin Your Discovery</a>
             </div>
           )}
 
-          {conversations.map((conv, index) => (
-            <article key={conv.id} className="journey-article">
+          {conversation && (
+            <article className="journey-article">
               <p className="journey-meta">
-                {formatDate(conv.created_at)} &nbsp;·&nbsp; Journey {conversations.length - index}
+                {formatDate(conversation.created_at)}
+                {conversation.version != null && (
+                  <>&nbsp;·&nbsp; Version {conversation.version}</>
+                )}
               </p>
               <div className="itinerary-body">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={markdownComponents}
                 >
-                  {cleanItinerary(conv.itinerary!)}
+                  {cleanItinerary(conversation.itinerary!)}
                 </ReactMarkdown>
               </div>
             </article>
-          ))}
+          )}
         </div>
       </div>
     </>

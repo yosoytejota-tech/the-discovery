@@ -272,6 +272,20 @@ So let's start simple:
  
 Why do you want to travel?"`;
 
+function extractTitle(text: string): string | null {
+  const bridgeIdx = text.search(/here is what i have built for you/i);
+  if (bridgeIdx === -1) return null;
+  const after = text.slice(bridgeIdx);
+  for (const line of after.split("\n")) {
+    const trimmed = line.trim();
+    // Match all-caps lines with at least one space (multi-word title, not a single header word)
+    if (trimmed && trimmed.includes(" ") && /^[A-Z][A-Z0-9\s,:''\-–—]+$/.test(trimmed)) {
+      return trimmed;
+    }
+  }
+  return null;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { messages, session_id } = await request.json();
@@ -291,7 +305,6 @@ export async function POST(request: NextRequest) {
     }
 
     const assistantMessage = content.text;
-    const isComplete = /before you start booking/i.test(assistantMessage);
     const isItinerary = assistantMessage.includes("TRIP AT A GLANCE");
 
     if (session_id) {
@@ -299,19 +312,51 @@ export async function POST(request: NextRequest) {
         ? [{ role: "assistant", content: assistantMessage }]
         : [...messages, { role: "assistant", content: assistantMessage }];
 
-      const upsertData: Record<string, unknown> = { session_id, transcript };
-      if (isComplete) upsertData.is_complete = true;
       if (isItinerary) {
+        // Count existing itinerary rows for this session to determine version
+        const { count } = await supabase
+          .from("conversations")
+          .select("*", { count: "exact", head: true })
+          .eq("session_id", session_id)
+          .not("itinerary", "is", null);
+
+        const version = (count ?? 0) + 1;
+        const title = extractTitle(assistantMessage);
+
         // Strip the post-itinerary refinement question before saving
         const endMatch = assistantMessage.search(/Is there anything here you want|before you start booking/i);
-        upsertData.itinerary = endMatch !== -1
+        const cleanedItinerary = endMatch !== -1
           ? assistantMessage.slice(0, endMatch).trimEnd()
           : assistantMessage;
+
+        // Insert a new row for this itinerary version — never overwrite existing versions
+        await supabase.from("conversations").insert({
+          session_id,
+          itinerary: cleanedItinerary,
+          version,
+          is_complete: true,
+          title,
+        });
       }
 
-      await supabase
+      // Always update the transcript on the main (non-itinerary) row
+      const { data: existing } = await supabase
         .from("conversations")
-        .upsert(upsertData, { onConflict: "session_id" });
+        .select("id")
+        .eq("session_id", session_id)
+        .is("itinerary", null)
+        .maybeSingle();
+
+      if (existing) {
+        await supabase
+          .from("conversations")
+          .update({ transcript })
+          .eq("id", existing.id);
+      } else {
+        await supabase
+          .from("conversations")
+          .insert({ session_id, transcript, version: null });
+      }
     }
 
     return NextResponse.json({ message: assistantMessage });
