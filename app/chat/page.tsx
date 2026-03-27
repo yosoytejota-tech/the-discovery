@@ -466,41 +466,36 @@ export default function ChatPage() {
           ) : (
             <>
               <div className="messages-area">
-                {(() => {
-                  let itineraryCount = 0;
-                  return messages.map((msg, i) => {
-                    const isItineraryMessage = msg.role === "assistant" &&
-                      /before you start booking/i.test(msg.content);
-                    if (isItineraryMessage) itineraryCount++;
-                    const msgVersion = itineraryCount;
+                {messages.map((msg, i) => {
+                  const isItineraryMessage = msg.role === "assistant" &&
+                    /before you start booking/i.test(msg.content);
 
-                    return (
-                      <div
-                        key={i}
-                        className={`msg-row message-fade-in ${msg.role === "user" ? "msg-row-user" : ""}`}
-                      >
-                        {msg.role === "assistant" ? (
-                          isItineraryMessage ? (
-                            <div className="itinerary-ready-card">
-                              <p className="itinerary-ready-text">
-                                Your itinerary is ready. I&apos;ve built your full plan, day by day breakdown, and booking notes — everything you need is waiting for you.
-                              </p>
-                              <a href={`/journey?session=${sessionId}&version=${msgVersion}`} className="journey-cta-btn">
-                                View Your Journey →
-                              </a>
-                            </div>
-                          ) : (
-                            <div className="msg-assistant assistant-message">
-                              <ReactMarkdown>{msg.content}</ReactMarkdown>
-                            </div>
-                          )
+                  return (
+                    <div
+                      key={i}
+                      className={`msg-row message-fade-in ${msg.role === "user" ? "msg-row-user" : ""}`}
+                    >
+                      {msg.role === "assistant" ? (
+                        isItineraryMessage ? (
+                          <div className="itinerary-ready-card">
+                            <p className="itinerary-ready-text">
+                              Your itinerary is ready. I&apos;ve built your full plan, day by day breakdown, and booking notes — everything you need is waiting for you.
+                            </p>
+                            <a href={`/journey?session=${sessionId}`} className="journey-cta-btn">
+                              View Your Journey →
+                            </a>
+                          </div>
                         ) : (
-                          <div className="msg-user">{msg.content}</div>
-                        )}
-                      </div>
-                    );
-                  });
-                })()}
+                          <div className="msg-assistant assistant-message">
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          </div>
+                        )
+                      ) : (
+                        <div className="msg-user">{msg.content}</div>
+                      )}
+                    </div>
+                  );
+                })}
 
                 {loading && (
                   <div className="msg-row">
