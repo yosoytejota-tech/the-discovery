@@ -54,24 +54,21 @@ export default async function JourneyPage({
   const { session, version } = await searchParams;
 
   let conversation: Conversation | null = null;
-  let error: unknown = null;
+  let hasError = false;
 
   if (session) {
-    let query = supabase
+    const base = supabase
       .from("conversations")
       .select("id, session_id, created_at, is_complete, itinerary, version, title")
       .eq("session_id", session)
       .not("itinerary", "is", null);
 
-    if (version) {
-      query = query.eq("version", parseInt(version));
-    } else {
-      query = query.order("version", { ascending: false }).limit(1);
-    }
+    const { data, error: err } = version
+      ? await base.eq("version", parseInt(version)).maybeSingle()
+      : await base.order("version", { ascending: false }).limit(1).maybeSingle();
 
-    const { data, error: err } = await query.maybeSingle();
     conversation = data ?? null;
-    error = err;
+    hasError = !!err;
   }
 
   return (
@@ -249,11 +246,11 @@ export default async function JourneyPage({
         <div className="journey-body">
           <p className="journey-page-title">Your Journey</p>
 
-          {error && (
+          {hasError && (
             <p className="journey-error">Unable to load your journey at this time.</p>
           )}
 
-          {!error && !conversation && (
+          {!hasError && !conversation && (
             <div className="journey-empty">
               <p>No completed itinerary found.</p>
               <a href="/chat" className="journey-empty-link">Begin Your Discovery</a>
