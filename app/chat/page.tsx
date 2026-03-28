@@ -31,7 +31,24 @@ export default function ChatPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Restore session from localStorage on mount
+  // Restore session from localStorage on mount — skip Begin screen if session exists
+  useEffect(() => {
+    const savedSession = localStorage.getItem("discovery_session_id");
+    if (!savedSession) return;
+    setSessionId(savedSession);
+    setStarted(true);
+    setLoading(true);
+    fetch(`/api/restore?session=${savedSession}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.messages && data.messages.length > 0) {
+          setMessages(data.messages);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   const resizeTextarea = () => {
     const el = textareaRef.current;
     if (!el) return;
@@ -40,30 +57,11 @@ export default function ChatPage() {
   };
 
   const startDiscovery = async () => {
-    setStarted(true);
-    setLoading(true);
-
-    const savedSession = localStorage.getItem("discovery_session_id");
-    if (savedSession) {
-      // Restore existing session — no new opening message
-      setSessionId(savedSession);
-      try {
-        const res = await fetch(`/api/restore?session=${savedSession}`);
-        const data = await res.json();
-        if (data.messages && data.messages.length > 0) {
-          setMessages(data.messages);
-          setLoading(false);
-          return;
-        }
-      } catch {
-        // fall through to start fresh
-      }
-    }
-
-    // No saved session (or restore failed) — start a new one
     const newSessionId = crypto.randomUUID();
     localStorage.setItem("discovery_session_id", newSessionId);
     setSessionId(newSessionId);
+    setStarted(true);
+    setLoading(true);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",

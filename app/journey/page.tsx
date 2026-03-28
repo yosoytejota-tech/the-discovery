@@ -14,14 +14,6 @@ type Conversation = {
   itinerary: string | null;
 };
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function cleanItinerary(raw: string): string {
   // Strip everything before the evocative trip title (YOUR ...) or OVERVIEW
   const startMatch = raw.search(/^(YOUR [A-Z]|OVERVIEW\b)/m);
@@ -219,27 +211,6 @@ export default async function JourneyPage({
           border-bottom: none;
         }
 
-        .journey-meta {
-          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
-          font-size: 0.7rem;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: #2874A6;
-          margin-bottom: 48px;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .journey-meta::before {
-          content: '';
-          display: inline-block;
-          width: 24px;
-          height: 1px;
-          background: #2874A6;
-          flex-shrink: 0;
-        }
-
         .journey-error {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           color: #6B7F8E;
@@ -280,11 +251,8 @@ export default async function JourneyPage({
             </div>
           )}
 
-          {conversations.map((conv, index) => (
+          {conversations.map((conv) => (
             <article key={conv.id} className="journey-article">
-              <p className="journey-meta">
-                {formatDate(conv.created_at)} &nbsp;·&nbsp; Journey {conversations.length - index}
-              </p>
               <div className="itinerary-body">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
