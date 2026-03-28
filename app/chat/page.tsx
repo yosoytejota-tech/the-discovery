@@ -479,7 +479,7 @@ export default function ChatPage() {
                         isItineraryMessage ? (
                           <div className="itinerary-ready-card">
                             <p className="itinerary-ready-text">
-                              Your itinerary is ready. I&apos;ve built your full plan, day by day breakdown, and booking notes — everything you need is waiting for you.
+                              Your itinerary is ready. Take a look and come back here if you want to adjust anything.
                             </p>
                             <a href={`/journey?session=${sessionId}`} className="journey-cta-btn">
                               View Your Journey →

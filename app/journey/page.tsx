@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Suspense } from "react";
-import { SessionRedirect, NewJourneyBtn } from "./SessionGuard";
+import { SessionRedirect, NewJourneyBtn, ScrollToBottomBtn } from "./SessionGuard";
 
 export const dynamic = "force-dynamic";
 
@@ -218,6 +218,30 @@ export default async function JourneyPage({
           padding-top: 48px;
         }
 
+        .scroll-btn {
+          position: fixed;
+          bottom: 90px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 60;
+          background: #0D1B2A;
+          border: 1px solid #2874A6;
+          color: #2874A6;
+          width: 34px;
+          height: 34px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+          padding: 0;
+        }
+
+        .scroll-btn:hover {
+          background: #2874A6;
+          color: #F5F0E8;
+        }
+
         @media (max-width: 768px) {
           .journey-header { padding: 18px 20px; }
           .journey-body { padding: 56px 24px 80px; }
@@ -265,6 +289,7 @@ export default async function JourneyPage({
           ))}
         </div>
       </div>
+      <ScrollToBottomBtn />
     </>
   );
 }
