@@ -308,10 +308,61 @@ function extractItinerary(text: string): string | null {
   return lines.slice(startIdx, endIdx).join("\n").trimEnd();
 }
 
+const PHASE_1_MSG = "I have everything I need. Give me a few minutes to put your itinerary together.";
+const PHASE_2_MSG = "Your itinerary is ready. Take a look and come back here if you want to adjust anything.";
+
 export async function POST(request: NextRequest) {
   try {
-    const { messages, session_id } = await request.json();
+    const { messages, session_id, phase } = await request.json();
 
+    // Phase 2: client triggers this after displaying Phase 1 — build the itinerary
+    if (phase === "build") {
+      // Strip Phase 1 message so Claude sees the real conversation
+      const cleanMessages = messages.filter(
+        (m: { role: string; content: string }) => !(m.role === "assistant" && m.content === PHASE_1_MSG)
+      );
+
+      const response = await client.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 8000,
+        system: SYSTEM_PROMPT,
+        messages: cleanMessages.length === 0
+          ? [{ role: "user", content: "BEGIN" }]
+          : cleanMessages,
+      });
+
+      const content = response.content[0];
+      if (content.type !== "text") {
+        return NextResponse.json({ error: "Unexpected response type" }, { status: 500 });
+      }
+
+      const assistantMessage = content.text;
+      const itinerary = extractItinerary(assistantMessage);
+
+      if (session_id) {
+        const transcript = [...messages, { role: "assistant", content: PHASE_2_MSG }];
+        const upsertData: Record<string, unknown> = { session_id, transcript, is_complete: true };
+        if (itinerary !== null) upsertData.itinerary = itinerary;
+        await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
+      }
+
+      return NextResponse.json({ message: PHASE_2_MSG });
+    }
+
+    // Phase 1 trigger: last assistant message contains "before you start booking"
+    // Return bridge message immediately without calling Claude
+    const lastAssistant = [...messages].reverse().find(
+      (m: { role: string; content: string }) => m.role === "assistant"
+    );
+    if (lastAssistant && /before you start booking/i.test(lastAssistant.content)) {
+      if (session_id) {
+        const transcript = [...messages, { role: "assistant", content: PHASE_1_MSG }];
+        await supabase.from("conversations").upsert({ session_id, transcript }, { onConflict: "session_id" });
+      }
+      return NextResponse.json({ message: PHASE_1_MSG, phase: "build" });
+    }
+
+    // Normal flow: call Claude
     const response = await client.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 8000,
@@ -330,14 +381,10 @@ export async function POST(request: NextRequest) {
     const isComplete = /before you start booking/i.test(assistantMessage);
     const isItinerary = assistantMessage.includes("TRIP AT A GLANCE");
 
-    const ITINERARY_BRIDGE =
-      "I have everything I need. Give me a few minutes to put your itinerary together — once it's ready, take a look and come back here if you want to adjust anything.";
-
-    // What we show in chat — bridge message for itineraries, full response otherwise
-    const displayMessage = isItinerary ? ITINERARY_BRIDGE : assistantMessage;
+    // Fallback: if Claude somehow generates itinerary without Phase 1 trigger
+    const displayMessage = isItinerary ? PHASE_2_MSG : assistantMessage;
 
     if (session_id) {
-      // Store the bridge message in the transcript so the chat restores correctly
       const transcript = messages.length === 0
         ? [{ role: "assistant", content: displayMessage }]
         : [...messages, { role: "assistant", content: displayMessage }];
@@ -346,12 +393,13 @@ export async function POST(request: NextRequest) {
       if (isComplete) upsertData.is_complete = true;
       if (isItinerary) {
         const itinerary = extractItinerary(assistantMessage);
-        if (itinerary !== null) upsertData.itinerary = itinerary;
+        if (itinerary !== null) {
+          upsertData.itinerary = itinerary;
+          upsertData.is_complete = true;
+        }
       }
 
-      await supabase
-        .from("conversations")
-        .upsert(upsertData, { onConflict: "session_id" });
+      await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
     }
 
     return NextResponse.json({ message: displayMessage });

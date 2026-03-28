@@ -103,7 +103,19 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: newMessages, session_id: sessionId }),
       });
       const data = await res.json();
-      setMessages([...newMessages, { role: "assistant", content: data.message }]);
+      const phase1Messages = [...newMessages, { role: "assistant", content: data.message }];
+      setMessages(phase1Messages);
+
+      if (data.phase === "build") {
+        // Phase 1 displayed — auto-trigger Phase 2 (loading stays true, dots remain visible)
+        const res2 = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: phase1Messages, session_id: sessionId, phase: "build" }),
+        });
+        const data2 = await res2.json();
+        setMessages([...phase1Messages, { role: "assistant", content: data2.message }]);
+      }
     } catch {
       setMessages([...newMessages, { role: "assistant", content: "Something went wrong. Please try again." }]);
     } finally {
@@ -468,7 +480,7 @@ export default function ChatPage() {
               <div className="messages-area">
                 {messages.map((msg, i) => {
                   const isItineraryMessage = msg.role === "assistant" &&
-                    /Give me a few minutes to put your itinerary together/i.test(msg.content);
+                    /Your itinerary is ready/i.test(msg.content);
 
                   return (
                     <div
