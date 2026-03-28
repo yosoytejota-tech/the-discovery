@@ -103,7 +103,7 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: newMessages, session_id: sessionId }),
       });
       const data = await res.json();
-      const phase1Messages = [...newMessages, { role: "assistant", content: data.message }];
+      const phase1Messages: Message[] = [...newMessages, { role: "assistant" as const, content: data.message }];
       setMessages(phase1Messages);
 
       if (data.phase === "build") {
