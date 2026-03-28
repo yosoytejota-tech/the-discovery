@@ -15,6 +15,9 @@ type Conversation = {
 };
 
 function cleanItinerary(raw: string): string {
+  // Strip tilde strikethrough syntax (~~text~~ → text)
+  raw = raw.replace(/~~(.*?)~~/g, "$1");
+
   // Strip everything before the evocative trip title (YOUR ...) or OVERVIEW
   const startMatch = raw.search(/^(YOUR [A-Z]|OVERVIEW\b)/m);
   const trimmed = startMatch !== -1 ? raw.slice(startMatch) : raw;
@@ -220,7 +223,7 @@ export default async function JourneyPage({
 
         .scroll-btn {
           position: fixed;
-          bottom: 90px;
+          bottom: 40px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 60;
