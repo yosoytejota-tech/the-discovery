@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
     const lastAssistant = [...messages].reverse().find(
       (m: { role: string; content: string }) => m.role === "assistant"
     );
-    if (lastAssistant && /before you start booking/i.test(lastAssistant.content)) {
+    if (lastAssistant && /I have everything I need\. Give me a few minutes/i.test(lastAssistant.content)) {
       if (session_id) {
         const transcript = [...messages, { role: "assistant", content: PHASE_1_MSG }];
         await supabase.from("conversations").upsert({ session_id, transcript }, { onConflict: "session_id" });

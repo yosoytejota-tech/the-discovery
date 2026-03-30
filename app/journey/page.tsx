@@ -18,12 +18,11 @@ function cleanItinerary(raw: string): string {
   // Strip tilde strikethrough syntax (~~text~~ → text)
   raw = raw.replace(/~~(.*?)~~/g, "$1");
 
-  // Strip everything before the evocative trip title (YOUR ...) or OVERVIEW
-  const startMatch = raw.search(/^(YOUR [A-Z]|OVERVIEW\b)/m);
-  const trimmed = startMatch !== -1 ? raw.slice(startMatch) : raw;
+  // Strip only known UI-injected preamble lines (e.g. "YOUR JOURNEYS" page header)
+  const trimmed = raw.split("\n").filter(line => !/^YOUR JOURNEYS\b/i.test(line.trim())).join("\n");
 
   // Strip the post-itinerary refinement question (full sentence or partial)
-  const endMatch = trimmed.search(/Is there anything here you want|before you start booking/i);
+  const endMatch = trimmed.search(/Is there anything here you want|before you start booking|Here is your itinerary\. Take a look/i);
   const cleaned = endMatch !== -1 ? trimmed.slice(0, endMatch).trimEnd() : trimmed;
 
   // Insert blank lines between consecutive field lines in the TRIP AT A GLANCE
