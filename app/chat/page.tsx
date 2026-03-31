@@ -31,6 +31,11 @@ export default function ChatPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Focus input when chat becomes active
+  useEffect(() => {
+    if (started) textareaRef.current?.focus();
+  }, [started]);
+
   // Restore session from localStorage on mount — skip Begin screen if session exists
   useEffect(() => {
     const savedSession = localStorage.getItem("discovery_session_id");
@@ -120,6 +125,7 @@ export default function ChatPage() {
       setMessages([...newMessages, { role: "assistant", content: "Something went wrong. Please try again." }]);
     } finally {
       setLoading(false);
+      textareaRef.current?.focus();
     }
   };
 
