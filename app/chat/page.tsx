@@ -15,6 +15,7 @@ export default function ChatPage() {
   const [started, setStarted] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [showBuildingMsg, setShowBuildingMsg] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -30,6 +31,16 @@ export default function ChatPage() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Show building message after 8 seconds of continuous loading
+  useEffect(() => {
+    if (!loading) {
+      setShowBuildingMsg(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowBuildingMsg(true), 8000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Focus input when chat becomes active
   useEffect(() => {
@@ -519,6 +530,13 @@ export default function ChatPage() {
                   <div className="msg-row">
                     <div className="typing-dots">
                       <span /><span /><span />
+                    </div>
+                  </div>
+                )}
+                {showBuildingMsg && (
+                  <div className="msg-row">
+                    <div className="msg-assistant assistant-message">
+                      I have everything I need. Give me a few minutes to put your itinerary together.
                     </div>
                   </div>
                 )}
