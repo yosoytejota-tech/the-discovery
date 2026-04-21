@@ -8,6 +8,10 @@ type Message = {
   content: string;
 };
 
+function stripBuildingMessage(content: string): string {
+  return content.replace(/I have everything I need\. Give me a few minutes to put your itinerary together\.?\n?/gi, "").trim();
+}
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -85,7 +89,7 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: [], session_id: newSessionId }),
       });
       const data = await res.json();
-      setMessages([{ role: "assistant", content: data.message }]);
+      setMessages([{ role: "assistant", content: stripBuildingMessage(data.message) }]);
     } catch {
       setMessages([{ role: "assistant", content: "Something went wrong. Please refresh and try again." }]);
     } finally {
@@ -119,7 +123,7 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: newMessages, session_id: sessionId }),
       });
       const data = await res.json();
-      const phase1Messages: Message[] = [...newMessages, { role: "assistant" as const, content: data.message }];
+      const phase1Messages: Message[] = [...newMessages, { role: "assistant" as const, content: stripBuildingMessage(data.message) }];
       setMessages(phase1Messages);
 
       if (data.phase === "build") {
@@ -130,7 +134,7 @@ export default function ChatPage() {
           body: JSON.stringify({ messages: phase1Messages, session_id: sessionId, phase: "build" }),
         });
         const data2 = await res2.json();
-        setMessages([...phase1Messages, { role: "assistant", content: data2.message }]);
+        setMessages([...phase1Messages, { role: "assistant", content: stripBuildingMessage(data2.message) }]);
       }
     } catch {
       setMessages([...newMessages, { role: "assistant", content: "Something went wrong. Please try again." }]);
