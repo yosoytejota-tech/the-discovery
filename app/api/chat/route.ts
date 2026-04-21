@@ -280,7 +280,12 @@ export async function POST(request: NextRequest) {
 
     const assistantMessage = content.text;
     const isComplete = /before you start booking/i.test(assistantMessage);
-    const isItinerary = assistantMessage.includes("TRIP AT A GLANCE");
+    const isItinerary = (
+      assistantMessage.includes("TRIP AT A GLANCE") ||
+      assistantMessage.includes("BUDGET BREAKDOWN") ||
+      assistantMessage.includes("ACCOMMODATION GUIDANCE") ||
+      assistantMessage.includes("BOOKING NOTES")
+    );
 
     // Fallback: if Claude somehow generates itinerary without Phase 1 trigger
     const displayMessage = isItinerary ? PHASE_2_MSG : assistantMessage;
