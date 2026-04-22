@@ -123,7 +123,7 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: newMessages, session_id: sessionId }),
       });
       const data = await res.json();
-      const phase1Messages: Message[] = [...newMessages, { role: "assistant" as const, content: stripBuildingMessage(data.message) }];
+      const phase1Messages: Message[] = [...newMessages, { role: "assistant" as const, content: data.message }];
       setMessages(phase1Messages);
 
       if (data.phase === "build") {
@@ -520,7 +520,7 @@ export default function ChatPage() {
                           </div>
                         ) : (
                           <div className="msg-assistant assistant-message">
-                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                            <ReactMarkdown>{stripBuildingMessage(msg.content)}</ReactMarkdown>
                           </div>
                         )
                       ) : (
