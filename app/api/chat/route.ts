@@ -181,19 +181,14 @@ function extractItinerary(text: string): string | null {
   let startIdx: number | null = null;
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trim();
-    if (!trimmed) continue;
-    const stripped = trimmed.replace(/^[#*_`>\s]+/, "").replace(/[*_`\s]+$/, "");
-    if (!stripped) continue;
-    const allCaps = stripped === stripped.toUpperCase() && /[A-Z]/.test(stripped);
-    const isTitle = /^THE DISCOVERY/i.test(stripped);
-    if (allCaps || isTitle) {
+    if (trimmed) {
       startIdx = i;
       break;
     }
   }
 
   if (startIdx === null) {
-    console.error("[extractItinerary] No all-caps title line found — itinerary not saved.");
+    console.error("[extractItinerary] Empty response — itinerary not saved.");
     return null;
   }
 
