@@ -244,6 +244,45 @@ export default async function JourneyPage({
           color: #F5F0E8;
         }
 
+        .itinerary-body hr {
+          margin: 2.5rem 0;
+          border: none;
+          border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .itinerary-body h1,
+        .itinerary-body h2,
+        .itinerary-body h3 {
+          font-size: 1.5rem;
+          font-weight: 400;
+          margin: 2.5rem 0 0.75rem;
+          color: rgba(255,255,255,0.95);
+        }
+
+        .itinerary-body p {
+          line-height: 1.8;
+          margin: 0 0 1rem;
+          color: rgba(255,255,255,0.85);
+        }
+
+        .itinerary-body strong {
+          color: rgba(255,255,255,0.95);
+        }
+
+        .itinerary-body .time-label {
+          color: rgba(100,180,220,0.8);
+          font-size: 0.72rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+
+        .itinerary-body ul,
+        .itinerary-body li {
+          line-height: 1.8;
+          margin-bottom: 0.5rem;
+        }
+
         @media (max-width: 768px) {
           .journey-header { padding: 18px 20px; }
           .journey-body { padding: 56px 24px 80px; }
