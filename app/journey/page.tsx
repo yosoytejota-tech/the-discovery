@@ -64,6 +64,9 @@ const markdownComponents: Components = {
     if (TIME_LABELS.test(text)) {
       return <strong className="time-label">{children}</strong>;
     }
+    if (/^Day \d+\s*[—–-]/.test(text)) {
+      return <strong className="day-header">{children}</strong>;
+    }
     return <strong>{children}</strong>;
   },
 };
@@ -291,6 +294,16 @@ export default async function JourneyPage({
           letter-spacing: 0.08em;
           text-transform: uppercase;
           font-weight: 600;
+        }
+
+        .itinerary-body .day-header {
+          display: block;
+          padding-top: 2rem;
+          margin-top: 2rem;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          font-size: 1rem;
+          font-weight: 600;
+          color: rgba(255,255,255,0.95);
         }
 
         .itinerary-body ul,
