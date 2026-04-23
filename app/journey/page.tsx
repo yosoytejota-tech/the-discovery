@@ -245,18 +245,34 @@ export default async function JourneyPage({
         }
 
         .itinerary-body hr {
-          margin: 2.5rem 0;
           border: none;
-          border-top: 1px solid rgba(255,255,255,0.08);
+          margin: 0;
+          padding: 0;
+          height: 0;
         }
 
-        .itinerary-body h1,
-        .itinerary-body h2,
-        .itinerary-body h3 {
-          font-size: 1.5rem;
+        .itinerary-body h1 {
+          font-size: 2.8rem;
+          font-weight: 300;
+          line-height: 1.2;
+          margin: 0 0 1.5rem;
+          color: rgba(255,255,255,0.97);
+        }
+
+        .itinerary-body h2 {
+          font-size: 1.3rem;
           font-weight: 400;
-          margin: 2.5rem 0 0.75rem;
+          margin: 3.5rem 0 1rem;
           color: rgba(255,255,255,0.95);
+        }
+
+        .itinerary-body h3 {
+          font-size: 1.1rem;
+          font-weight: 500;
+          letter-spacing: 0.03em;
+          margin: 2.5rem 0 0.5rem;
+          color: rgba(255,255,255,0.7);
+          text-transform: uppercase;
         }
 
         .itinerary-body p {
