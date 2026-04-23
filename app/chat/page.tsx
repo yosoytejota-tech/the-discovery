@@ -18,6 +18,7 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
+  const sessionIdRef = useRef<string>("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [showBuildingMsg, setShowBuildingMsg] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -45,6 +46,11 @@ export default function ChatPage() {
     const timer = setTimeout(() => setShowBuildingMsg(true), 8000);
     return () => clearTimeout(timer);
   }, [loading]);
+
+  // Keep sessionIdRef in sync with sessionId state so async closures always read the latest value
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+  }, [sessionId]);
 
   // Focus input when chat becomes active
   useEffect(() => {
@@ -79,6 +85,7 @@ export default function ChatPage() {
   const startDiscovery = async () => {
     const newSessionId = crypto.randomUUID();
     localStorage.setItem("discovery_session_id", newSessionId);
+    sessionIdRef.current = newSessionId;
     setSessionId(newSessionId);
     setStarted(true);
     setLoading(true);
@@ -89,7 +96,7 @@ export default function ChatPage() {
         body: JSON.stringify({ messages: [], session_id: newSessionId }),
       });
       const data = await res.json();
-      setMessages([{ role: "assistant", content: stripBuildingMessage(data.message) }]);
+      setMessages([{ role: "assistant", content: data.message }]);
     } catch {
       setMessages([{ role: "assistant", content: "Something went wrong. Please refresh and try again." }]);
     } finally {
@@ -117,24 +124,30 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
+      const currentSessionId = sessionIdRef.current;
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages, session_id: sessionId }),
+        body: JSON.stringify({ messages: newMessages, session_id: currentSessionId }),
       });
       const data = await res.json();
-      const phase1Messages: Message[] = [...newMessages, { role: "assistant" as const, content: data.message }];
-      setMessages(phase1Messages);
 
       if (data.phase === "build") {
-        // Phase 1 displayed — auto-trigger Phase 2 (loading stays true, dots remain visible)
+        // Phase 1 bridge — don't add the bridge message to displayed state (shown via building indicator).
+        // Build a separate apiMessages array that includes the bridge for the phase 2 API call.
+        const apiMessages: Message[] = [...newMessages, { role: "assistant" as const, content: data.message }];
+        // Keep displayed messages as-is (newMessages) while loading indicator runs
+        setMessages(newMessages);
+
         const res2 = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: phase1Messages, session_id: sessionId, phase: "build" }),
+          body: JSON.stringify({ messages: apiMessages, session_id: currentSessionId, phase: "build" }),
         });
         const data2 = await res2.json();
-        setMessages([...phase1Messages, { role: "assistant", content: stripBuildingMessage(data2.message) }]);
+        setMessages([...newMessages, { role: "assistant", content: data2.message }]);
+      } else {
+        setMessages([...newMessages, { role: "assistant", content: data.message }]);
       }
     } catch {
       setMessages([...newMessages, { role: "assistant", content: "Something went wrong. Please try again." }]);
@@ -520,7 +533,7 @@ export default function ChatPage() {
                           </div>
                         ) : (
                           <div className="msg-assistant assistant-message">
-                            <ReactMarkdown>{stripBuildingMessage(msg.content)}</ReactMarkdown>
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
                           </div>
                         )
                       ) : (

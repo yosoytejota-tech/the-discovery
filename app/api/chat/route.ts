@@ -94,7 +94,7 @@ BEFORE BUILDING THE ITINERARY — THE FINAL QUESTIONS
 Before asking anything, review what has already been established in the conversation. Only ask what is genuinely unknown. Do not ask about dietary restrictions if they were already covered. Do not reconfirm ground days if already confirmed. Do not ask about timing or departure city if already established. Ask only what is missing.
 First — confirm ground days one final time if not recently confirmed. "Just to confirm before I build this — you have X days on the ground. That gives us [Y nights] across the full journey. Does that work?" Brief check only — do not recalculate.
 Second — how much do you want me to direct the day-to-day versus leaving room to discover things yourself? "Some people want every meal chosen and every hour shaped. Others want the route and the key stops and prefer to find the details on the ground. Where do you fall?" Calibrate the itinerary accordingly. For freedom travelers: route structure, key stops, one or two anchor recommendations per destination. For directed travelers: specific named restaurants, streets, booking details, insider context throughout. Never assume — always ask.
-Third — any dietary restrictions or foods either of you genuinely do not eat. One question covers all relevant considerations — allergies, restrictions, strong dislikes, and anything culturally relevant to the destination. No follow-up food questions after this is answered.
+Third — any dietary restrictions or foods either of you genuinely do not eat. One question covers all relevant considerations — allergies, restrictions, strong dislikes, and anything culturally relevant to the destination. No follow-up food questions after this is answered. When acknowledging the dietary answer, include that acknowledgment in the same message as "I have everything I need. Give me a few minutes to put your itinerary together." — do not send a standalone acknowledgment first.
 Once all open questions are answered, deliver this and nothing else before the itinerary: "I have everything I need. Give me a few minutes to put your itinerary together."
 When the itinerary is complete close with: "Here is your itinerary. Take a look and come back here if you want to adjust anything."
 
@@ -239,7 +239,8 @@ export async function POST(request: NextRequest) {
         const transcript = [...messages, { role: "assistant", content: PHASE_2_MSG }];
         const upsertData: Record<string, unknown> = { session_id, transcript, is_complete: true };
         if (itinerary !== null) upsertData.itinerary = itinerary;
-        await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
+        const { error: upsertError } = await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
+        if (upsertError) console.error("[supabase phase2 upsert]", upsertError);
       }
 
       return NextResponse.json({ message: PHASE_2_MSG });
@@ -253,7 +254,8 @@ export async function POST(request: NextRequest) {
     if (lastAssistant && /I have everything I need\. Give me a few minutes/i.test(lastAssistant.content)) {
       if (session_id) {
         const transcript = [...messages, { role: "assistant", content: PHASE_1_MSG }];
-        await supabase.from("conversations").upsert({ session_id, transcript }, { onConflict: "session_id" });
+        const { error: upsertError } = await supabase.from("conversations").upsert({ session_id, transcript }, { onConflict: "session_id" });
+        if (upsertError) console.error("[supabase phase1 upsert]", upsertError);
       }
       return NextResponse.json({ message: PHASE_1_MSG, phase: "build" });
     }
@@ -274,6 +276,19 @@ export async function POST(request: NextRequest) {
     }
 
     const assistantMessage = content.text;
+
+    // Claude produced the bridge message in this response (possibly with a short preamble like "Perfect.").
+    // Normalise to canonical PHASE_1_MSG and trigger phase 2 immediately.
+    if (/I have everything I need\. Give me a few minutes/i.test(assistantMessage)) {
+      if (session_id) {
+        const transcript = [...messages, { role: "assistant", content: PHASE_1_MSG }];
+        const { error: upsertError } = await supabase.from("conversations")
+          .upsert({ session_id, transcript }, { onConflict: "session_id" });
+        if (upsertError) console.error("[supabase phase1-inline upsert]", upsertError);
+      }
+      return NextResponse.json({ message: PHASE_1_MSG, phase: "build" });
+    }
+
     const isComplete = /before you start booking/i.test(assistantMessage);
     const isItinerary = (
       assistantMessage.includes("TRIP AT A GLANCE") ||
@@ -300,7 +315,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
+      const { error: upsertError } = await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
+      if (upsertError) console.error("[supabase normal upsert]", upsertError);
     }
 
     return NextResponse.json({ message: displayMessage });
