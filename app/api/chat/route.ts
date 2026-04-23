@@ -213,18 +213,18 @@ export async function POST(request: NextRequest) {
 
     // Phase 2: client triggers this after displaying Phase 1 — build the itinerary
     if (phase === "build") {
-      // Strip Phase 1 message so Claude sees the real conversation
-      const cleanMessages = messages.filter(
-        (m: { role: string; content: string }) => !(m.role === "assistant" && m.content === PHASE_1_MSG)
-      );
+      // Keep PHASE_1_MSG in history so Claude knows it already committed to building.
+      // Append a synthetic user message to trigger itinerary generation.
+      const buildMessages = [
+        ...messages,
+        { role: "user", content: "Please build the full itinerary now." },
+      ];
 
       const response = await client.messages.create({
         model: "claude-sonnet-4-6",
         max_tokens: 8000,
         system: SYSTEM_PROMPT,
-        messages: cleanMessages.length === 0
-          ? [{ role: "user", content: "BEGIN" }]
-          : cleanMessages,
+        messages: buildMessages,
       });
 
       const content = response.content[0];
