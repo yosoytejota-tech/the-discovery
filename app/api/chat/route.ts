@@ -236,7 +236,12 @@ export async function POST(request: NextRequest) {
       const itinerary = extractItinerary(assistantMessage);
 
       if (session_id) {
-        const transcript = [...messages, { role: "assistant", content: PHASE_2_MSG }];
+        // Strip PHASE_1_MSG before saving — it's a synthetic bridge, not a real Claude response.
+        // Prevents re-trigger on session restore.
+        const cleanTranscript = messages.filter(
+          (m: { role: string; content: string }) => !(m.role === "assistant" && m.content === PHASE_1_MSG)
+        );
+        const transcript = [...cleanTranscript, { role: "assistant", content: PHASE_2_MSG }];
         const upsertData: Record<string, unknown> = { session_id, transcript, is_complete: true };
         if (itinerary !== null) upsertData.itinerary = itinerary;
         const { error: upsertError } = await supabase.from("conversations").upsert(upsertData, { onConflict: "session_id" });
@@ -253,7 +258,10 @@ export async function POST(request: NextRequest) {
     );
     if (lastAssistant && /I have everything I need\. Give me a few minutes/i.test(lastAssistant.content)) {
       if (session_id) {
-        const transcript = [...messages, { role: "assistant", content: PHASE_1_MSG }];
+        // Save transcript without PHASE_1_MSG — it's a synthetic bridge, not a real Claude response.
+        const transcript = messages.filter(
+          (m: { role: string; content: string }) => !(m.role === "assistant" && m.content === PHASE_1_MSG)
+        );
         const { error: upsertError } = await supabase.from("conversations").upsert({ session_id, transcript }, { onConflict: "session_id" });
         if (upsertError) console.error("[supabase phase1 upsert]", upsertError);
       }
@@ -281,7 +289,8 @@ export async function POST(request: NextRequest) {
     // Normalise to canonical PHASE_1_MSG and trigger phase 2 immediately.
     if (/I have everything I need\. Give me a few minutes/i.test(assistantMessage)) {
       if (session_id) {
-        const transcript = [...messages, { role: "assistant", content: PHASE_1_MSG }];
+        // Save transcript without PHASE_1_MSG — it's a synthetic bridge, not a real Claude response.
+        const transcript = messages;
         const { error: upsertError } = await supabase.from("conversations")
           .upsert({ session_id, transcript }, { onConflict: "session_id" });
         if (upsertError) console.error("[supabase phase1-inline upsert]", upsertError);
