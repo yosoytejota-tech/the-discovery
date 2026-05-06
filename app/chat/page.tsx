@@ -251,7 +251,7 @@ export default function ChatPage() {
         .begin-subline {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-weight: 300;
-          font-size: 10px;
+          font-size: 1.35rem;
           letter-spacing: 0.22em;
           text-transform: uppercase;
           color: rgba(0, 0, 0, 0.4);
