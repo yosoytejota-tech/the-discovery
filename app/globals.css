@@ -1,12 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0D1B2A;
-  --foreground: #F5F0E8;
-  --accent: #2874A6;
-  --muted: #6B7F8E;
-  --navy-light: #162435;
-  --navy-mid: #1A2D40;
+  --background: #FEFEFE;
+  --foreground: #111111;
+  --accent: #2C2010;
+  --muted: #888888;
 }
 
 * {
@@ -44,17 +42,17 @@ body {
 .assistant-message p:last-child { margin-bottom: 0; }
 
 .assistant-message h1, .assistant-message h2, .assistant-message h3 {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
-  font-weight: 400;
+  font-family: var(--font-spectral), 'Spectral', serif;
+  font-weight: 300;
   letter-spacing: 0.02em;
   margin: 1.6em 0 0.5em;
-  color: #F5F0E8;
+  color: #111;
 }
 
 .assistant-message h1 { font-size: 1.4em; }
 .assistant-message h2 { font-size: 1.2em; }
 .assistant-message h3 { font-size: 0.85em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-.assistant-message strong { color: #F5F0E8; font-weight: 600; }
+.assistant-message strong { color: #111; font-weight: 600; }
 .assistant-message ul, .assistant-message ol { padding-left: 1.5em; margin: 0.5em 0 1em; }
 .assistant-message li { margin-bottom: 0.3em; }
 
@@ -64,7 +62,7 @@ body {
   font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
   font-size: 16px;
   line-height: 1.95;
-  color: #B8C4CC;
+  color: rgba(44, 32, 16, 0.75);
 }
 
 .itinerary-body p {
@@ -75,36 +73,36 @@ body {
 
 /* Destination / major section headers */
 .itinerary-body h1 {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-family: var(--font-spectral), 'Spectral', serif;
   font-size: 1.65em;
-  font-weight: 500;
-  color: #F5F0E8;
+  font-weight: 300;
+  color: #2C2010;
   letter-spacing: 0.02em;
   margin: 3.5em 0 1em;
   padding-bottom: 0.6em;
-  border-bottom: 1px solid rgba(40, 116, 166, 0.4);
+  border-bottom: 1px solid rgba(44, 32, 16, 0.2);
 }
 
 .itinerary-body h1:first-child { margin-top: 0; }
 
 /* Section headers (OVERVIEW, TRIP AT A GLANCE, etc.) */
 .itinerary-body h2 {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-family: var(--font-spectral), 'Spectral', serif;
   font-size: 1.3em;
-  font-weight: 500;
-  color: #F5F0E8;
+  font-weight: 300;
+  color: #2C2010;
   letter-spacing: 0.02em;
   margin: 3em 0 0.9em;
   padding-bottom: 0.5em;
-  border-bottom: 1px solid rgba(245, 240, 232, 0.1);
+  border-bottom: 1px solid rgba(44, 32, 16, 0.12);
 }
 
 /* Day headers */
 .itinerary-body h3 {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-family: var(--font-spectral), 'Spectral', serif;
   font-size: 1.1em;
-  font-weight: 500;
-  color: #F5F0E8;
+  font-weight: 300;
+  color: #2C2010;
   letter-spacing: 0.01em;
   margin: 2.5em 0 0.7em;
 }
@@ -112,11 +110,11 @@ body {
 /* Horizontal rules = destination/country breaks */
 .itinerary-body hr {
   border: none;
-  border-top: 1px solid rgba(40, 116, 166, 0.4);
+  border-top: 1px solid rgba(44, 32, 16, 0.15);
   margin: 4em 0;
 }
 
-.itinerary-body strong { color: #F5F0E8; font-weight: 600; }
+.itinerary-body strong { color: #2C2010; font-weight: 600; }
 
 /* Time-of-day labels styled via custom component */
 .itinerary-body .time-label {
@@ -125,7 +123,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #2874A6;
+  color: #2C2010;
 }
 
 .itinerary-body ul, .itinerary-body ol {

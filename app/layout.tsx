@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Spectral, DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const spectral = Spectral({
+  variable: "--font-spectral",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400"],
   style: ["normal", "italic"],
 });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${dmSans.variable}`}>
+      <body className={`${spectral.variable} ${dmSans.variable}`}>
         {children}
       </body>
     </html>

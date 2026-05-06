@@ -96,8 +96,8 @@ export default async function JourneyPage({
       <style>{`
         .journey-root {
           min-height: 100vh;
-          background: #0D1B2A;
-          color: #F5F0E8;
+          background: #F5F0E8;
+          color: #2C2010;
         }
 
         .journey-header {
@@ -105,45 +105,44 @@ export default async function JourneyPage({
           top: 0;
           z-index: 100;
           padding: 20px 40px;
-          background: #0D1B2A;
-          border-bottom: 1px solid rgba(40, 116, 166, 0.25);
+          background: #F5F0E8;
+          border-bottom: 4px solid #2C2010;
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
         .journey-header-logo {
-          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-family: var(--font-spectral), 'Spectral', serif;
           font-weight: 300;
-          font-size: 0.85rem;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.6);
+          font-size: 1.05rem;
+          letter-spacing: 0.04em;
+          color: #2C2010;
           text-decoration: none;
           transition: color 0.2s;
         }
 
-        .journey-header-logo:hover { color: #F5F0E8; }
+        .journey-header-logo:hover { color: rgba(44, 32, 16, 0.6); }
 
         .journey-new-link {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
-          font-size: 0.72rem;
-          letter-spacing: 0.16em;
+          font-size: 10px;
+          letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.3);
+          color: rgba(44, 32, 16, 0.45);
           text-decoration: none;
           transition: color 0.2s;
         }
 
-        .journey-new-link:hover { color: rgba(245, 240, 232, 0.75); }
+        .journey-new-link:hover { color: #2C2010; }
 
         .journey-back-btn {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
-          font-size: 0.72rem;
-          letter-spacing: 0.14em;
+          font-size: 10px;
+          letter-spacing: 0.16em;
           text-transform: uppercase;
-          color: #2874A6;
-          border: 1px solid #2874A6;
+          color: #2C2010;
+          border: 1px solid #2C2010;
           padding: 7px 18px;
           text-decoration: none;
           transition: all 0.25s ease;
@@ -151,7 +150,7 @@ export default async function JourneyPage({
         }
 
         .journey-back-btn:hover {
-          background: #2874A6;
+          background: #2C2010;
           color: #F5F0E8;
         }
 
@@ -164,10 +163,10 @@ export default async function JourneyPage({
         .journey-page-title {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-weight: 300;
-          font-size: 0.72rem;
+          font-size: 10px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: #6B7F8E;
+          color: rgba(44, 32, 16, 0.45);
           margin-bottom: 64px;
         }
 
@@ -181,20 +180,20 @@ export default async function JourneyPage({
         }
 
         .journey-empty p {
-          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-family: var(--font-spectral), 'Spectral', serif;
           font-size: 1.25rem;
-          font-weight: 400;
-          color: rgba(245, 240, 232, 0.35);
+          font-weight: 300;
+          color: rgba(44, 32, 16, 0.4);
           line-height: 1.6;
         }
 
         .journey-empty-link {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
-          font-size: 0.78rem;
+          font-size: 10px;
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.6);
-          border: 1px solid #2874A6;
+          color: rgba(44, 32, 16, 0.7);
+          border: 1px solid #2C2010;
           padding: 13px 36px;
           text-decoration: none;
           transition: all 0.3s ease;
@@ -202,14 +201,14 @@ export default async function JourneyPage({
         }
 
         .journey-empty-link:hover {
-          background: #2874A6;
+          background: #2C2010;
           color: #F5F0E8;
         }
 
         .journey-article {
           margin-bottom: 100px;
           padding-bottom: 100px;
-          border-bottom: 1px solid rgba(40, 116, 166, 0.2);
+          border-bottom: 1px solid rgba(44, 32, 16, 0.15);
         }
 
         .journey-article:last-child {
@@ -218,7 +217,7 @@ export default async function JourneyPage({
 
         .journey-error {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
-          color: #6B7F8E;
+          color: rgba(44, 32, 16, 0.5);
           font-size: 15px;
           padding-top: 48px;
         }
@@ -229,9 +228,9 @@ export default async function JourneyPage({
           left: 50%;
           transform: translateX(-50%);
           z-index: 60;
-          background: #0D1B2A;
-          border: 1px solid #2874A6;
-          color: #2874A6;
+          background: #F5F0E8;
+          border: 1px solid #2C2010;
+          color: #2C2010;
           width: 34px;
           height: 34px;
           display: flex;
@@ -243,7 +242,7 @@ export default async function JourneyPage({
         }
 
         .scroll-btn:hover {
-          background: #2874A6;
+          background: #2C2010;
           color: #F5F0E8;
         }
 
@@ -259,37 +258,37 @@ export default async function JourneyPage({
           font-weight: 300;
           line-height: 1.2;
           margin: 0 0 1.5rem;
-          color: rgba(255,255,255,0.97);
+          color: #2C2010;
         }
 
         .itinerary-body h2 {
           font-size: 1.3rem;
-          font-weight: 400;
+          font-weight: 300;
           margin: 3.5rem 0 1rem;
-          color: rgba(255,255,255,0.95);
+          color: #2C2010;
         }
 
         .itinerary-body h3 {
           font-size: 1.1rem;
-          font-weight: 500;
+          font-weight: 300;
           letter-spacing: 0.03em;
           margin: 2.5rem 0 0.5rem;
-          color: rgba(255,255,255,0.7);
+          color: rgba(44, 32, 16, 0.65);
           text-transform: uppercase;
         }
 
         .itinerary-body p {
           line-height: 1.8;
           margin: 0 0 1rem;
-          color: rgba(255,255,255,0.85);
+          color: rgba(44, 32, 16, 0.8);
         }
 
         .itinerary-body strong {
-          color: rgba(255,255,255,0.95);
+          color: #2C2010;
         }
 
         .itinerary-body .time-label {
-          color: rgba(100,180,220,0.8);
+          color: #2C2010;
           font-size: 0.72rem;
           letter-spacing: 0.08em;
           text-transform: uppercase;
@@ -300,10 +299,10 @@ export default async function JourneyPage({
           display: block;
           padding-top: 2rem;
           margin-top: 2rem;
-          border-top: 1px solid rgba(255,255,255,0.08);
+          border-top: 1px solid rgba(44, 32, 16, 0.12);
           font-size: 1rem;
           font-weight: 600;
-          color: rgba(255,255,255,0.95);
+          color: #2C2010;
         }
 
         .itinerary-body ul,

@@ -169,8 +169,8 @@ export default function ChatPage() {
       <style>{`
         .chat-root {
           min-height: 100vh;
-          background: #0D1B2A;
-          color: #F5F0E8;
+          background: #FEFEFE;
+          color: #111;
           display: flex;
           flex-direction: column;
         }
@@ -183,25 +183,24 @@ export default function ChatPage() {
           right: 0;
           z-index: 100;
           padding: 20px 40px;
-          background: #0D1B2A;
-          border-bottom: 1px solid rgba(40, 116, 166, 0.25);
+          background: #FEFEFE;
+          border-bottom: 4px solid #111;
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
         .chat-header-logo {
-          font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+          font-family: var(--font-spectral), 'Spectral', serif;
           font-weight: 300;
-          font-size: 0.85rem;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.6);
+          font-size: 1.05rem;
+          letter-spacing: 0.04em;
+          color: #111;
           text-decoration: none;
           transition: color 0.2s;
         }
 
-        .chat-header-logo:hover { color: #F5F0E8; }
+        .chat-header-logo:hover { color: #444; }
 
         .chat-header-actions {
           display: flex;
@@ -213,10 +212,10 @@ export default function ChatPage() {
           background: none;
           border: none;
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
-          font-size: 0.72rem;
-          letter-spacing: 0.16em;
+          font-size: 10px;
+          letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.3);
+          color: rgba(0, 0, 0, 0.35);
           cursor: pointer;
           padding: 0;
           transition: color 0.2s;
@@ -224,7 +223,7 @@ export default function ChatPage() {
           display: inline-block;
         }
 
-        .btn-ghost:hover { color: rgba(245, 240, 232, 0.75); }
+        .btn-ghost:hover { color: #111; }
 
         /* ── Body ── */
         .chat-body {
@@ -252,10 +251,10 @@ export default function ChatPage() {
         .begin-subline {
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-weight: 300;
-          font-size: 0.75rem;
+          font-size: 10px;
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.35);
+          color: rgba(0, 0, 0, 0.4);
           margin-bottom: 24px;
           opacity: 0;
           animation: fadeInUp 0.7s ease both;
@@ -263,11 +262,11 @@ export default function ChatPage() {
         }
 
         .begin-headline {
-          font-family: var(--font-playfair), 'Playfair Display', serif;
-          font-weight: 400;
+          font-family: var(--font-spectral), 'Spectral', serif;
+          font-weight: 300;
           font-size: clamp(1.8rem, 4vw, 2.8rem);
           line-height: 1.35;
-          color: #F5F0E8;
+          color: #111;
           margin-bottom: 48px;
           opacity: 0;
           animation: fadeInUp 0.7s ease both;
@@ -280,9 +279,9 @@ export default function ChatPage() {
           font-size: 0.8rem;
           letter-spacing: 0.28em;
           text-transform: uppercase;
-          color: rgba(245, 240, 232, 0.75);
+          color: #111;
           background: transparent;
-          border: 1px solid #2874A6;
+          border: 1px solid #111;
           padding: 14px 48px;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -292,8 +291,8 @@ export default function ChatPage() {
         }
 
         .begin-btn:hover {
-          background: #2874A6;
-          color: #F5F0E8;
+          background: #111;
+          color: #FEFEFE;
           letter-spacing: 0.33em;
         }
 
@@ -311,39 +310,39 @@ export default function ChatPage() {
 
         .msg-assistant {
           max-width: 88%;
-          background: #0D1B2A;
-          border: 1px solid rgba(245, 240, 232, 0.2);
+          background: #F7F5F2;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           padding: 12px 18px;
-          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-family: var(--font-spectral), 'Spectral', serif;
           font-size: 18px;
           line-height: 1.9;
-          color: #F5F0E8;
+          color: #111;
         }
 
         .msg-user {
           max-width: 70%;
-          background: #162435;
-          border: 1px solid rgba(245, 240, 232, 0.2);
+          background: #EFEFEF;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           padding: 12px 18px;
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-size: 15px;
           line-height: 1.6;
-          color: rgba(245, 240, 232, 0.75);
+          color: #333;
         }
 
         /* ── Itinerary ready card ── */
         .itinerary-ready-card {
           max-width: 88%;
-          background: #0D1B2A;
-          border: 1px solid rgba(245, 240, 232, 0.2);
+          background: #F7F5F2;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           padding: 24px 22px;
         }
 
         .itinerary-ready-text {
-          font-family: var(--font-playfair), 'Playfair Display', serif;
+          font-family: var(--font-spectral), 'Spectral', serif;
           font-size: 17px;
           line-height: 1.85;
-          color: rgba(245, 240, 232, 0.85);
+          color: #333;
           margin-bottom: 22px;
         }
 
@@ -353,16 +352,16 @@ export default function ChatPage() {
           font-size: 0.82rem;
           font-weight: 500;
           letter-spacing: 0.1em;
-          color: #2874A6;
-          border: 1px solid #2874A6;
+          color: #111;
+          border: 1px solid #111;
           padding: 11px 26px;
           text-decoration: none;
           transition: all 0.25s ease;
         }
 
         .journey-cta-btn:hover {
-          background: #2874A6;
-          color: #F5F0E8;
+          background: #111;
+          color: #FEFEFE;
         }
 
         /* ── Typing indicator ── */
@@ -371,15 +370,15 @@ export default function ChatPage() {
           align-items: center;
           gap: 6px;
           padding: 12px 18px;
-          border: 1px solid rgba(245, 240, 232, 0.12);
-          background: #0D1B2A;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          background: #F7F5F2;
         }
 
         .typing-dots span {
           width: 5px;
           height: 5px;
           border-radius: 50%;
-          background: #2874A6;
+          background: #888;
           opacity: 0.2;
           animation: pulse 1.4s ease-in-out infinite;
         }
@@ -394,9 +393,9 @@ export default function ChatPage() {
           left: 50%;
           transform: translateX(-50%);
           z-index: 60;
-          background: #0D1B2A;
-          border: 1px solid #2874A6;
-          color: #2874A6;
+          background: #FEFEFE;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          color: #111;
           width: 34px;
           height: 34px;
           display: flex;
@@ -408,8 +407,8 @@ export default function ChatPage() {
         }
 
         .scroll-btn:hover {
-          background: #2874A6;
-          color: #F5F0E8;
+          background: #111;
+          color: #FEFEFE;
         }
 
         /* ── Input area ── */
@@ -419,8 +418,8 @@ export default function ChatPage() {
           left: 0;
           right: 0;
           z-index: 50;
-          background: #0D1B2A;
-          border-top: 1px solid rgba(40, 116, 166, 0.2);
+          background: #FEFEFE;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
           padding: 20px 28px 24px;
         }
 
@@ -436,8 +435,8 @@ export default function ChatPage() {
           flex: 1;
           background: transparent;
           border: none;
-          border-bottom: 1px solid rgba(40, 116, 166, 0.3);
-          color: #F5F0E8;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+          color: #111;
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-size: 15px;
           padding: 8px 0;
@@ -451,13 +450,13 @@ export default function ChatPage() {
         }
 
         .chat-textarea::-webkit-scrollbar { display: none; }
-        .chat-textarea::placeholder { color: rgba(245, 240, 232, 0.25); }
-        .chat-textarea:focus { border-bottom-color: #2874A6; }
+        .chat-textarea::placeholder { color: rgba(0, 0, 0, 0.25); }
+        .chat-textarea:focus { border-bottom-color: #111; }
 
         .send-btn {
           background: transparent;
-          border: 1px solid rgba(40, 116, 166, 0.4);
-          color: rgba(245, 240, 232, 0.4);
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          color: rgba(0, 0, 0, 0.3);
           font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
           font-size: 0.72rem;
           letter-spacing: 0.14em;
@@ -469,14 +468,14 @@ export default function ChatPage() {
         }
 
         .send-btn.active {
-          border-color: #2874A6;
-          color: rgba(245, 240, 232, 0.8);
+          border-color: #111;
+          color: #111;
           cursor: pointer;
         }
 
         .send-btn.active:hover {
-          background: #2874A6;
-          color: #F5F0E8;
+          background: #111;
+          color: #FEFEFE;
         }
 
         @media (max-width: 600px) {
@@ -503,7 +502,7 @@ export default function ChatPage() {
             <div className="begin-screen">
               <p className="begin-subline">A different kind of travel conversation</p>
               <h1 className="begin-headline">
-                Most trips start with a destination.<br />We start with you.
+                Most trips start with a destination.<br /><em>We start with you.</em>
               </h1>
               <button className="begin-btn" onClick={startDiscovery}>
                 Begin
