@@ -168,20 +168,17 @@ export default function ChatPage() {
     <>
       <style>{`
         .chat-root {
-          min-height: 100vh;
+          height: 100vh;
           background: #FEFEFE;
           color: #111;
           display: flex;
           flex-direction: column;
+          overflow: hidden;
         }
 
         /* ── Header ── */
         .chat-header {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 100;
+          flex-shrink: 0;
           padding: 20px 40px;
           background: #FEFEFE;
           border-bottom: 4px solid #111;
@@ -228,12 +225,14 @@ export default function ChatPage() {
         /* ── Body ── */
         .chat-body {
           flex: 1;
+          min-height: 0;
           max-width: 740px;
           width: 100%;
           margin: 0 auto;
-          padding: 120px 28px 110px;
+          padding: 24px 28px 0;
           display: flex;
           flex-direction: column;
+          overflow: hidden;
         }
 
         /* ── Begin screen ── */
@@ -299,10 +298,12 @@ export default function ChatPage() {
         /* ── Messages ── */
         .messages-area {
           flex: 1;
+          min-height: 0;
           display: flex;
           flex-direction: column;
           gap: 36px;
-          padding-bottom: 0;
+          overflow-y: auto;
+          padding-bottom: 24px;
         }
 
         .msg-row { display: flex; }
@@ -413,11 +414,7 @@ export default function ChatPage() {
 
         /* ── Input area ── */
         .input-area {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          z-index: 50;
+          flex-shrink: 0;
           background: #FEFEFE;
           border-top: 1px solid rgba(0, 0, 0, 0.1);
           padding: 20px 28px 24px;
@@ -480,7 +477,7 @@ export default function ChatPage() {
 
         @media (max-width: 600px) {
           .chat-header { padding: 18px 20px; }
-          .chat-body { padding: 100px 20px 110px; }
+          .chat-body { padding: 16px 20px 0; }
           .input-area { padding: 16px 20px 20px; }
           .msg-assistant { font-size: 16px; }
         }
@@ -570,31 +567,33 @@ export default function ChatPage() {
                   </svg>
                 </button>
               )}
-
-              <div className="input-area">
-                <div className="input-area-inner">
-                  <textarea
-                    ref={textareaRef}
-                    className="chat-textarea"
-                    value={input}
-                    onChange={e => { setInput(e.target.value); resizeTextarea(); }}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Your answer..."
-                    disabled={loading}
-                    rows={1}
-                  />
-                  <button
-                    className={`send-btn${!loading && input.trim() ? " active" : ""}`}
-                    onClick={sendMessage}
-                    disabled={loading || !input.trim()}
-                  >
-                    Send
-                  </button>
-                </div>
-              </div>
             </>
           )}
         </div>
+
+        {started && (
+          <div className="input-area">
+            <div className="input-area-inner">
+              <textarea
+                ref={textareaRef}
+                className="chat-textarea"
+                value={input}
+                onChange={e => { setInput(e.target.value); resizeTextarea(); }}
+                onKeyDown={handleKeyDown}
+                placeholder="Your answer..."
+                disabled={loading}
+                rows={1}
+              />
+              <button
+                className={`send-btn${!loading && input.trim() ? " active" : ""}`}
+                onClick={sendMessage}
+                disabled={loading || !input.trim()}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
